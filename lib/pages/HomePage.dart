@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutterquiz/backend/QuizPool.dart';
+import 'package:flutterquiz/widgets/Background.dart';
+import 'package:flutterquiz/widgets/RandQuiz.dart';
 import 'package:flutterquiz/widgets/TakeQuiz.dart';
 class HomePage extends StatefulWidget {
 
@@ -15,10 +17,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentPage = 0;
-
+  
   final _pages = const [
     TakeQuiz(),
-    Text('index 1 - RandomQuiz'),
+    RandQuiz(),
     Text('index 2 - Results'),
   ];
 
@@ -29,6 +31,12 @@ class _HomePageState extends State<HomePage> {
   };
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => setToDefault());
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -37,7 +45,13 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: const Color.fromARGB(139, 46, 45, 45),
         foregroundColor: Colors.white,
       ),
-      body: Center(child: Center(child: _pages[_currentPage])),
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 175),
+        child: KeyedSubtree(
+          key: ValueKey<int>(_currentPage),
+          child: Center(child: Center(child: _pages[_currentPage]))
+        )
+      ),
       bottomNavigationBar: NavigationBar(
         animationDuration: Duration(milliseconds: 200),
         backgroundColor: Color.fromARGB(205, 247, 247, 248),
@@ -47,8 +61,8 @@ class _HomePageState extends State<HomePage> {
           setState(() => _currentPage = index);
         },
         destinations: [
-          NavigationDestination(icon: _icons['Quiz']!, label: 'Take a Quiz'),
-          NavigationDestination(icon: _icons['RandomQuiz']!, label: 'Take a Random Quiz'),
+          NavigationDestination(icon: _icons['Quiz']!, label: 'Available Quizzes'),
+          NavigationDestination(icon: _icons['RandomQuiz']!, label: 'Random Quiz'),
           NavigationDestination(icon: _icons['Results']!, label: 'Results'),
         ],
         labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,

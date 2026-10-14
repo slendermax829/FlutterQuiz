@@ -1,10 +1,7 @@
 extension QuestionIdentification on Enum{
 
   String kind(){
-    var name = this.name.toLowerCase();
-    name.replaceAll(RegExp('_'), ' ');
-    
-    return name;
+    return name.toLowerCase().replaceAll('_', ' ');
   }
 }
 

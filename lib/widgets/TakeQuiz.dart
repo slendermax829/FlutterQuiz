@@ -29,6 +29,7 @@ class _TakeQuizState extends State<TakeQuiz> {
               mainAxisSize: MainAxisSize.max,
               children: [
                 Text('Available Quizzes',style: TextStyle(color: Colors.white,fontSize: 24),),
+                Text('Take a pre-set quiz below.',style: TextStyle(fontSize: 12, color: Colors.white),),
                 Expanded(
                   child: ListView.builder(
                     itemCount: HomePage.pool.numOfQuizzes,

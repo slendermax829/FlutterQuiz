@@ -11,6 +11,34 @@ class QuizPool{
   int get numOfQuizzes => _quizzes.length;
   int get numOfQuestions => _quizzes.fold(0, (sum,q)=> sum += q.numQuestions);
 
+  int get numMCQuestions{
+    return _quizzes.fold(0, (sum,q){
+      var questions = q.questions;
+      for(var qu in questions){
+        if(qu.type == 'multiple choice'){
+          sum += 1;
+        }else{
+          continue;
+        }
+      }
+      return sum;
+    });
+  }
+
+  int get numFIBQuestions{
+    return _quizzes.fold(0, (sum,q){
+      var questions = q.questions;
+      for(var qu in questions){
+        if(qu.type == 'fill in the blank'){
+          sum += 1;
+        }else{
+          continue;
+        }
+      }
+      return sum;
+    });
+  }
+
   QuizPool();
 
   Future<void> populatePool() async{

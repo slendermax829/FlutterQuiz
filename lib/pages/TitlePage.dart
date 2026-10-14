@@ -16,42 +16,46 @@ class TitlePage extends StatelessWidget {
         children: [
           //Container(color: Colors.tealAccent),
           SafeArea(
+            maintainBottomViewPadding: true,
             child: LayoutBuilder(
               builder: (context, constraints) => SingleChildScrollView(
                 child: ConstrainedBox(
                   constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                  child: Column(
-                    spacing: 30,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      FlutterLogo(
-                        size: 65,
-                        textColor: Colors.white,
-                        curve: Curves.fastOutSlowIn,
-                      ),
-                      Text(
-                        'FlutterQuiz',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 48,
-                          fontFamily: 'Trebuchet',
-                          fontStyle: FontStyle.italic,
+                  child: Center(
+                    child: Column(
+                      spacing: 25,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        FlutterLogo(
+                          size: 52,
+                          textColor: Colors.white,
+                          curve: Curves.fastOutSlowIn,
                         ),
-                      ),
-                      
-                      Text(
-                        'A quiz application to test your knowledge both on Dart and Flutter',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontFamily: 'Trebuchet',
-                          fontStyle: FontStyle.italic,
+                        Text(
+                          'FlutterQuiz',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 34,
+                            fontFamily: 'Trebuchet',
+                            fontStyle: FontStyle.italic,
+                          ),
                         ),
-                      ),
-
-                      const LoginForm(),
-                    ],
+                        
+                        Text(
+                          'A quiz application to test your knowledge both on Dart and Flutter',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontFamily: 'Trebuchet',
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                    
+                        const LoginForm(),
+                      ],
+                    ),
                   ),
                 ),
               ),
