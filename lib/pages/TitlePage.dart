@@ -10,11 +10,11 @@ class TitlePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: Stack(
         fit: StackFit.expand,
         children: [
           //Container(color: Colors.tealAccent),
-          Background(),
           SafeArea(
             child: LayoutBuilder(
               builder: (context, constraints) => SingleChildScrollView(
@@ -49,7 +49,8 @@ class TitlePage extends StatelessWidget {
                           fontStyle: FontStyle.italic,
                         ),
                       ),
-                      LoginForm(),
+
+                      const LoginForm(),
                     ],
                   ),
                 ),

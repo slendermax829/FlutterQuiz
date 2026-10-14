@@ -8,7 +8,6 @@ class LoginForm extends StatefulWidget {
   @override
   State<LoginForm> createState() => _LoginFormState();
 }
-
 class _LoginFormState extends State<LoginForm> {
   final TextEditingController _userController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -23,18 +22,10 @@ class _LoginFormState extends State<LoginForm> {
     var loginResponse = await qs.validateUser(username: username, pin: pin);
 
     if(loginResponse.response){
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context)=> const HomePage(),
-          
-        )
-      );
+      Navigator.push(context, MaterialPageRoute(builder: (context)=> HomePage(userEmail: _userController.text)));
+    }else{
+      displayMessage('LOGIN FAILED', Colors.red);
     }
-
-    loginResponse.response
-        ? displayMessage('LOGIN SUCCESSFUL!', Colors.greenAccent)
-        : displayMessage('LOGIN FAILED', Colors.red);
   }
 
   void displayMessage(String message, [Color color = Colors.amberAccent]) {

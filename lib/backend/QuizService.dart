@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutterquiz/backend/Quiz.dart';
 import 'dart:developer' as dev;
 import 'package:http/http.dart' as http;
 
@@ -68,6 +69,32 @@ Future<({bool response,String reason})> validateQuiz(int quizNum) async{
     return (response: false, reason: 'An Error had occurred');
   }
 }
+
+// Future<List<Quiz>> fetchQuiz(int quizNum) async{
+//   try{
+//     var number = quizNum.toString().padLeft(2,'0');
+//     var url = Uri.parse('$_quizUrl?quiz=quiz$number');
+//     var response = await http.get(url);
+
+//     var jsonData = jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true)) as Map<String, dynamic>;
+    
+//     if(jsonData['response'] != true){
+//       throw HttpException('Quiz $number not found.');
+//     }
+
+//     var quizData = jsonData['quiz'] as Map<String, dynamic>;
+
+//     var quizName = quizData['name'];
+//     var questionData = quizData['questions'] as List<dynamic>;
+
+//     var questions = questionData.map((q) {
+
+      
+//     });
+
+
+//   }
+// }
 
 Future<({bool response, String reason})> validateUser({required String username, required int pin}) async{
   try{
