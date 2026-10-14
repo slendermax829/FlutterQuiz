@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutterquiz/backend/QuizPool.dart';
 import 'package:flutterquiz/widgets/TakeQuiz.dart';
-
 class HomePage extends StatefulWidget {
+
+  static QuizPool pool = QuizPool();
+
   final String userEmail;
+
   const new({super.key, required this.userEmail});
 
   @override

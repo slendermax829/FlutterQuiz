@@ -24,11 +24,7 @@ class Quiz {
       }
     }
 
-    var dataQuestions = data['questions'];
-
-    List<Question> questions = dataQuestions.map((e) {
-      return Question.fromData(data[e]);
-    });
+    final List<Question> questions = (data['questions'] as List).map((e) => Question.fromData(e as Map<String, dynamic>)).toList();
 
     final Quiz newQuiz = Quiz.internal(name, questions);
     _quizCache.add(newQuiz);

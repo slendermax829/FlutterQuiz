@@ -70,31 +70,33 @@ Future<({bool response,String reason})> validateQuiz(int quizNum) async{
   }
 }
 
-// Future<List<Quiz>> fetchQuiz(int quizNum) async{
-//   try{
-//     var number = quizNum.toString().padLeft(2,'0');
-//     var url = Uri.parse('$_quizUrl?quiz=quiz$number');
-//     var response = await http.get(url);
+Future<List<Quiz>> fetchQuizzes() async{
+  final quizzes = <Quiz>[];
 
-//     var jsonData = jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true)) as Map<String, dynamic>;
-    
-//     if(jsonData['response'] != true){
-//       throw HttpException('Quiz $number not found.');
-//     }
+  for(var quizNum = 1; ; quizNum++){
+    final quiz = await _fetchQuiz(quizNum);
+    if(quiz == null){
+      break;
+    }
+    quizzes.add(quiz);
+  }
 
-//     var quizData = jsonData['quiz'] as Map<String, dynamic>;
+  return quizzes;
+}
 
-//     var quizName = quizData['name'];
-//     var questionData = quizData['questions'] as List<dynamic>;
+// Returns null once the server reports the quiz does not exist.
+Future<Quiz?> _fetchQuiz(int quizNum) async{
+  final number = quizNum.toString().padLeft(2,'0');
+  final url = Uri.parse('$_quizUrl?quiz=quiz$number');
+  final response = await http.get(url);
 
-//     var questions = questionData.map((q) {
+  final jsonData = jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true)) as Map<String, dynamic>;
 
-      
-//     });
-
-
-//   }
-// }
+  if(jsonData['response'] != true){
+    return null;
+  }
+  return Quiz.fromJson(jsonData['quiz'] as Map<String, dynamic>);
+}
 
 Future<({bool response, String reason})> validateUser({required String username, required int pin}) async{
   try{
