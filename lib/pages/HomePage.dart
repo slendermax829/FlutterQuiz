@@ -30,10 +30,16 @@ class _HomePageState extends State<HomePage> {
     'Results': Icon(Icons.book)
   };
 
+  final Map<String,Icon> _selectedIcons = const{
+    'Quiz': Icon(Icons.search, color: Colors.white,),
+    'RandomQuiz': Icon(Icons.question_mark, color: Colors.white,),
+    'Results': Icon(Icons.book, color: Colors.white,)
+  };
+
   @override
   void initState() {
-    super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => setToDefault());
+    super.initState();
   }
 
   @override
@@ -53,6 +59,20 @@ class _HomePageState extends State<HomePage> {
         )
       ),
       bottomNavigationBar: NavigationBar(
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.blue,
+              );
+            }
+            return const TextStyle(
+              fontSize: 12,
+              color: Colors.grey,
+            );
+          }
+        ),
         animationDuration: Duration(milliseconds: 200),
         backgroundColor: Color.fromARGB(205, 247, 247, 248),
         indicatorColor: Color.fromARGB(255, 26, 100, 238),
@@ -61,9 +81,9 @@ class _HomePageState extends State<HomePage> {
           setState(() => _currentPage = index);
         },
         destinations: [
-          NavigationDestination(icon: _icons['Quiz']!, label: 'Available Quizzes'),
-          NavigationDestination(icon: _icons['RandomQuiz']!, label: 'Random Quiz'),
-          NavigationDestination(icon: _icons['Results']!, label: 'Results'),
+          NavigationDestination(icon: _icons['Quiz']!, label: 'Available Quizzes', selectedIcon: _selectedIcons['Quiz'],),
+          NavigationDestination(icon: _icons['RandomQuiz']!, label: 'Random Quiz', selectedIcon: _selectedIcons['RandomQuiz'],),
+          NavigationDestination(icon: _icons['Results']!, label: 'Results', selectedIcon: _selectedIcons['Results'],),
         ],
         labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
       ),

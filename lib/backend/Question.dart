@@ -55,7 +55,7 @@ class MultipleChoice extends Question{
   final List<String> _options;
   final int _answerIndex;
 
-  int get answer => _answerIndex + 1;
+  String get answer => _options.asMap().entries.firstWhere((e) => e.key == _answerIndex).toString();
   String get options => _options.asMap().entries.map((e)=>'${e.key+1} ${e.value}').toString();
 
   const MultipleChoice(String stem, this._options, this._answerIndex):super(stem,QuestionType.MULTIPLE_CHOICE);

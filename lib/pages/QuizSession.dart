@@ -1,0 +1,154 @@
+import 'package:flutter/material.dart';
+import 'package:flutterquiz/widgets/Background.dart';
+import 'package:flutterquiz/backend/Question.dart';
+
+class QuizSession extends StatefulWidget {
+  final bool _isPractice;
+  final String _quizName;
+  final List<Question> _questions;
+
+  const new({
+    super.key,
+    required String quizName,
+    required List<Question> questions,
+    bool isPractice = false,
+  }) : this._quizName = quizName,
+       this._questions = questions,
+       this._isPractice = isPractice;
+
+  @override
+  State<QuizSession> createState() => _QuizSessionState();
+}
+
+class _QuizSessionState extends State<QuizSession> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => changeBackGround(bg: CustomBackgrounds.QUIZ_SESSION),
+    );
+    super.initState();
+  }
+
+  void _showSessionActions() {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.refresh),
+                title: const Text('Restart Quiz'),
+              ),
+              ListTile(
+                leading: const Icon(Icons.send),
+                title: const Text('Submit Quiz'),
+                onTap: () {
+                  Navigator.pop(context);
+                  debugPrint('submitted Quiz');
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.info),
+                title: const Text('Quiz Info'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _displayInfo();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.exit_to_app),
+                title: const Text('Exit'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _quitQuiz();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _displayInfo() async {
+    await showDialog<void>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Center(child: Text('Quiz Info')),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Quiz Name: ${widget._quizName}'),
+              Text('Questions: ${widget._questions.length}'),
+              Text(widget._isPractice ? 'Mode: Practice' : 'Mode: Standard'),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _quitQuiz() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Quit current quiz?'),
+          content: Text('Would you like to quit your current session?'),
+          backgroundColor: Colors.white,
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text('No'),
+            ),
+            FilledButton(
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.resolveWith<Color>((
+                  states,
+                ) {
+                  if (states.contains(WidgetState.hovered)) {
+                    return Colors.redAccent;
+                  }
+                  if (states.contains(WidgetState.pressed)) {
+                    return Colors.red.shade700;
+                  }
+                  return Colors.redAccent;
+                }),
+              ),
+              onPressed: () => Navigator.pop(context, true),
+              child: Text('Yes'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirm!) {
+      Navigator.pop(context);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Text(widget._quizName),
+        backgroundColor: const Color.fromARGB(128, 0, 0, 0),
+        foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            onPressed: _showSessionActions,
+            icon: const Icon(Icons.more_vert),
+            tooltip: 'Quiz actions',
+          ),
+        ],
+      ),
+    );
+  }
+}
