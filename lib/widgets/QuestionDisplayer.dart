@@ -12,8 +12,8 @@ class QuestionDisplayer extends StatefulWidget {
 }
 
 class _QuestionDisplayerState extends State<QuestionDisplayer> {
-
-  final ValueNotifier<List<(String, String, bool)>> shareDataNoitifer = ValueNotifier([]);
+  final ValueNotifier<List<(String, String, bool)>> shareDataNoitifer =
+      ValueNotifier([]);
 
   late Question _currQuestion;
   late int _currentQuestionIndex;
@@ -71,7 +71,6 @@ class _QuestionDisplayerState extends State<QuestionDisplayer> {
 
   void _goForward() => _changeQuestion(1);
 
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -90,130 +89,159 @@ class _QuestionDisplayerState extends State<QuestionDisplayer> {
                 borderRadius: BorderRadius.circular(15),
               ),
               child: Builder(
-                  builder: (context) {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.max,
+                builder: (context) {
+                  return Row(
                       children: [
-                        ...List.generate(answeredQuestions.length, (index) {
-                          final isAnswered = answeredQuestions[index];
-          
-                          return Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 10),
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 125),
-                              width: 12,
-                              height: 12,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: index == _currentQuestionIndex
-                                    ? BoxBorder.all(color: Colors.yellowAccent)
-                                    : null,
-                                color: isAnswered ? Colors.green : Color.fromARGB(145, 79, 79, 79),
-                              ),
-                              child: isAnswered
-                                  ? const Icon(
-                                      Icons.check,
-                                      color: Colors.white,
-                                      size: 12,
-                                    )
-                                  : const SizedBox.shrink(),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
+                                ...List.generate(answeredQuestions.length, (
+                                  index,
+                                ) {
+                                  final isAnswered = answeredQuestions[index];
+                    
+                                  return Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 10),
+                                    child: AnimatedContainer(
+                                      duration: const Duration(milliseconds: 125),
+                                      width: 12,
+                                      height: 12,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: index == _currentQuestionIndex
+                                            ? BoxBorder.all(
+                                                color: Colors.yellowAccent,
+                                              )
+                                            : null,
+                                        color: isAnswered
+                                            ? Colors.green
+                                            : Color.fromARGB(145, 79, 79, 79),
+                                      ),
+                                      child: isAnswered
+                                          ? const Icon(
+                                              Icons.check,
+                                              color: Colors.white,
+                                              size: 12,
+                                            )
+                                          : const SizedBox.shrink(),
+                                    ),
+                                  );
+                                }),
+                              ],
                             ),
-                          );
-                        }),
-                        Row(
-                          spacing: 15,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            ElevatedButton(
-                              onPressed: _isFirstQuestion ? null : _goBack,
-                              child: Icon(Icons.arrow_back),
-                            ),
-                            ElevatedButton(
-                              onPressed: _isLastQuestion ? null : _goForward,
-                              child: Icon(Icons.arrow_forward),
-                            ),
-                          ],
+                          ),
                         ),
                       ],
                     );
-                  },
-                ),
+                },
+              ),
             ),
             DecoratedBox(
-            decoration: BoxDecoration(
-              color: Color.fromARGB(84, 0, 0, 0),
-              border: BoxBorder.all(color: Colors.blue),
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Text(
-                  'Question $questionNum of ${widget._questions.length}',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+              decoration: BoxDecoration(
+                color: Color.fromARGB(84, 0, 0, 0),
+                border: BoxBorder.all(color: Colors.blue),
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Row(
+                spacing: 50,
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(iconColor: Colors.blue, backgroundColor: Color.fromARGB(160, 119, 119, 119)),
+                    onPressed: _isFirstQuestion ? null : _goBack,
+                    child: Icon(Icons.arrow_back)
                   ),
-                ),
-                SizedBox(height: 16),
-                Text(
-                  _currQuestion.stem,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
-                SizedBox(height: 30),
-                if (_currQuestion case final MultipleChoice mc)
-                  RadioGroup<int>(
-                    groupValue: _selectedChoices[_currentQuestionIndex],
-                    onChanged: (value) {
-                      if (value == null) return;
-                      setState(() {
-                        _selectedChoices[_currentQuestionIndex] = value;
-                        answeredQuestions[_currentQuestionIndex] = true;
-                      });
-                    },
-                    child: Column(
-                      children: [
-                        for (final (i, option) in mc.choices.indexed)
-                          RadioListTile<int>(
-                            value: i,
-                            title: Text(
-                              option,
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          ),
-                      ],
-                    ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(iconColor: Colors.blue, backgroundColor: Color.fromARGB(160, 119, 119, 119)),
+                    onPressed: _isLastQuestion ? null : _goForward,
+                    child: Icon(Icons.arrow_forward)
                   )
-                else if (_currQuestion is FillInBlank)
-                  Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: TextField(
-                      controller: _textController,
-                      style: const TextStyle(color: Colors.white),
-                      decoration: const InputDecoration(
-                        labelText: 'Your answer',
-                        labelStyle: TextStyle(color: Colors.white70),
-                        border: OutlineInputBorder(),
+                ],
+              ),
+            ),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: Color.fromARGB(84, 0, 0, 0),
+                border: BoxBorder.all(color: Colors.blue),
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Text(
+                    'Question $questionNum of ${widget._questions.length}',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      decoration: TextDecoration.underline
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  Text(
+                    _currQuestion.stem,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white, 
+                      fontSize: 14
                       ),
-                      onChanged: (text) {
+                  ),
+                  SizedBox(height: 16),
+                  if (_currQuestion case final MultipleChoice mc)
+                    RadioGroup<int>(
+                      groupValue: _selectedChoices[_currentQuestionIndex],
+                      onChanged: (value) {
+                        if (value == null) return;
                         setState(() {
-                          _typedAnswers[_currentQuestionIndex] = text;
-                          answeredQuestions[_currentQuestionIndex] =
-                              text.trim().isNotEmpty;
+                          _selectedChoices[_currentQuestionIndex] = value;
+                          answeredQuestions[_currentQuestionIndex] = true;
                         });
                       },
+                      child: Column(
+                        children: [
+                          for (final (i, option) in mc.choices.indexed)
+                            RadioListTile<int>(
+                              value: i,
+                              title: Text(
+                                option,
+                                style: const TextStyle(color: Colors.white, fontSize: 12),
+                              ),
+                            ),
+                        ],
+                      ),
+                    )
+                  else if (_currQuestion is FillInBlank)
+                    Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: TextField(
+                        controller: _textController,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: const InputDecoration(
+                          isDense: true,
+                          contentPadding: EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                          labelText: 'Your answer',
+                          labelStyle: TextStyle(color: Colors.white70, fontSize: 12 ),
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (text) {
+                          setState(() {
+                            _typedAnswers[_currentQuestionIndex] = text;
+                            answeredQuestions[_currentQuestionIndex] = text
+                                .trim()
+                                .isNotEmpty;
+                          });
+                        },
+                      ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
-          
+          ],
         ),
       ),
     );
