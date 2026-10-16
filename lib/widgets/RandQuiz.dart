@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutterquiz/pages/HomePage.dart';
+import 'package:flutterquiz/backend/QuizPool.dart' as pool;
 
 class RandQuiz extends StatefulWidget {
   const new({super.key});
@@ -21,11 +22,11 @@ class _RandQuizState extends State<RandQuiz> {
   int get _maxQuestions {
     switch (_selectedQuizType) {
       case _mcOnly:
-        return HomePage.pool.numMCQuestions;
+        return pool.numMCQuestions;
       case _fibOnly:
-        return HomePage.pool.numFIBQuestions;
+        return pool.numFIBQuestions;
       case _any:
-        return HomePage.pool.numOfQuestions;
+        return pool.numOfQuestions;
       default:
         return 0;
     }

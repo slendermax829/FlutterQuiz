@@ -3,6 +3,7 @@ import 'package:flutterquiz/backend/Quiz.dart';
 import 'package:flutterquiz/pages/HomePage.dart';
 import 'package:flutterquiz/pages/QuizSession.dart';
 import 'package:flutterquiz/widgets/Background.dart';
+import 'package:flutterquiz/backend/QuizPool.dart' as pool;
 
 class TakeQuiz extends StatefulWidget {
   const new({super.key});
@@ -72,11 +73,12 @@ class _TakeQuizState extends State<TakeQuiz> {
     );
 
     if ((confirm ?? false) && mounted) {
+      
       await Navigator.push<void>(
         context,
         MaterialPageRoute(
           builder: (context) => QuizSession(
-            questions: [],
+            questions: selectedQuiz.questions,
             quizName: selectedQuiz.name,
           ),
         ),
@@ -112,9 +114,9 @@ class _TakeQuizState extends State<TakeQuiz> {
               ),
               Expanded(
                 child: ListView.builder(
-                  itemCount: HomePage.pool.numOfQuizzes,
+                  itemCount: pool.numOfQuizzes,
                   itemBuilder: (context, index) {
-                    final quiz = HomePage.pool.quizzes[index];
+                    final quiz = pool.quizzes[index];
                     return ListTile(
                       leading: CircleAvatar(
                         child: Text('${index + 1}'),
@@ -133,7 +135,7 @@ class _TakeQuizState extends State<TakeQuiz> {
                       ),
                       hoverColor: Color.fromARGB(124, 0, 136, 255),
                       onTap: () => _confirmQuiz(
-                        HomePage.pool.quizzes.firstWhere(
+                        pool.quizzes.firstWhere(
                           (q) => q.quizNo == index + 1,
                         ),
                       ),

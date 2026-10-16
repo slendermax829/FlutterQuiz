@@ -55,6 +55,8 @@ class MultipleChoice extends Question{
   final List<String> _options;
   final int _answerIndex;
 
+  List<String> get choices => List.unmodifiable(_options);
+
   String get answer => _options.asMap().entries.firstWhere((e) => e.key == _answerIndex).toString();
   String get options => _options.asMap().entries.map((e)=>'${e.key+1} ${e.value}').toString();
 

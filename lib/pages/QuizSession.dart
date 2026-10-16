@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutterquiz/widgets/Background.dart';
 import 'package:flutterquiz/backend/Question.dart';
+import 'package:flutterquiz/widgets/QuestionDisplayer.dart';
 
 class QuizSession extends StatefulWidget {
   final bool _isPractice;
@@ -40,6 +41,10 @@ class _QuizSessionState extends State<QuizSession> {
               ListTile(
                 leading: const Icon(Icons.refresh),
                 title: const Text('Restart Quiz'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _restartQuiz();
+                },
               ),
               ListTile(
                 leading: const Icon(Icons.send),
@@ -127,10 +132,54 @@ class _QuizSessionState extends State<QuizSession> {
       },
     );
 
-    if (confirm!) {
-      Navigator.pop(context);
+    if (!mounted || confirm != true) {
+      return;
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) => setToDefault());
+    Navigator.pop(context);
   }
+
+  void _submitQuiz(){
+
+  }
+
+  void _restartQuiz() async{
+    final confirm = await showDialog<bool>(
+      context: context, 
+      builder: (context){
+        return AlertDialog(
+          title: const Text('Restart Quiz'),
+          content: const Text('Do you want to restart your current quiz session?\n\nNote: Questions will not be saved'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context,false), 
+              child: const Text('Cancel')
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true), 
+              child: const Text('Confirm')
+            )
+          ],
+        );
+      }
+    );
+
+    if (!mounted || confirm != true) {
+      return;
+    }
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => QuizSession(
+          quizName: widget._quizName,
+          questions: widget._questions,
+          isPractice: widget._isPractice,
+        ),
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -149,6 +198,7 @@ class _QuizSessionState extends State<QuizSession> {
           ),
         ],
       ),
+      body: QuestionDisplayer(questions: widget._questions)
     );
   }
 }

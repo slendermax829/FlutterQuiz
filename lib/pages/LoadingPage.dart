@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutterquiz/pages/HomePage.dart';
+import 'package:flutterquiz/backend/QuizPool.dart' as pool;
 
 class LoadingPage extends StatefulWidget {
   final String userEmail;
@@ -23,7 +24,7 @@ class _LoadingPageState extends State<LoadingPage> {
     if (_failed) setState(() => _failed = false);
 
     try {
-      await HomePage.pool.repopulate();
+      await pool.repopulate();
     } catch (_) {
       if (mounted) setState(() => _failed = true);
       return;

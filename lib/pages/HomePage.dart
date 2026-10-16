@@ -5,8 +5,6 @@ import 'package:flutterquiz/widgets/RandQuiz.dart';
 import 'package:flutterquiz/widgets/TakeQuiz.dart';
 class HomePage extends StatefulWidget {
 
-  static QuizPool pool = QuizPool();
-
   final String userEmail;
 
   const new({super.key, required this.userEmail});
