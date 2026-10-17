@@ -8,18 +8,13 @@ class QuestionDisplayer extends StatefulWidget {
     : _questions = questions;
 
   @override
-  State<QuestionDisplayer> createState() => _QuestionDisplayerState();
+  State<QuestionDisplayer> createState() => QuestionDisplayerState();
 }
-
-class _QuestionDisplayerState extends State<QuestionDisplayer> {
-  final ValueNotifier<List<(String, String, bool)>> shareDataNoitifer =
-      ValueNotifier([]);
-
+class QuestionDisplayerState extends State<QuestionDisplayer> {
   late Question _currQuestion;
   late int _currentQuestionIndex;
 
   late final List<bool> answeredQuestions;
-  late final List<({String userAnswer, Question question})> questionRecords;
 
   int get questionNum => _currentQuestionIndex + 1;
 
@@ -30,6 +25,23 @@ class _QuestionDisplayerState extends State<QuestionDisplayer> {
   final Map<int, String> _typedAnswers = {};
 
   final TextEditingController _textController = TextEditingController();
+
+  bool get allAnswered => answeredQuestions.every((a) => a);
+
+  /// Unanswered questions are counted as incorrect.
+  ({int finalScore, List<Question> correct, List<Question> incorrect}) grade() {
+    final correct = <Question>[];
+    final incorrect = <Question>[];
+
+    for (final (i, q) in widget._questions.indexed) {
+      final answer = q is MultipleChoice ? _selectedChoices[i] : _typedAnswers[i];
+      (answeredQuestions[i] && q.isCorrect(answer) ? correct : incorrect).add(q);
+    }
+    var totalQuestions = correct.length + incorrect.length;
+    var score = (correct.length/totalQuestions * 100).round();
+
+    return (finalScore:score ,correct: correct, incorrect: incorrect);
+  }
 
   @override
   void dispose() {
@@ -42,7 +54,6 @@ class _QuestionDisplayerState extends State<QuestionDisplayer> {
     super.initState();
 
     answeredQuestions = List.filled(widget._questions.length, false);
-    questionRecords = [];
 
     _currentQuestionIndex = 0;
     _currQuestion = widget._questions[_currentQuestionIndex];

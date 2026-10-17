@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutterquiz/backend/QuizService.dart' as qs;
 import 'package:flutterquiz/pages/LoadingPage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginForm extends StatefulWidget {
   const new({super.key});
@@ -22,6 +23,10 @@ class _LoginFormState extends State<LoginForm> {
     var loginResponse = await qs.validateUser(username: username, pin: pin);
 
     if(loginResponse.response){
+      
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('saved_username', username);
+
       Navigator.push(context, MaterialPageRoute(builder: (context)=> LoadingPage(userEmail: _userController.text)));
     }else{
       displayMessage('LOGIN FAILED', Colors.red);

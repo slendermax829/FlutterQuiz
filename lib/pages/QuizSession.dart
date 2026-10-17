@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutterquiz/widgets/Background.dart';
 import 'package:flutterquiz/backend/Question.dart';
 import 'package:flutterquiz/widgets/QuestionDisplayer.dart';
+import 'package:flutterquiz/pages/ResultsScreen.dart';
 
 class QuizSession extends StatefulWidget {
   final bool _isPractice;
@@ -22,6 +23,8 @@ class QuizSession extends StatefulWidget {
 }
 
 class _QuizSessionState extends State<QuizSession> {
+  final GlobalKey<QuestionDisplayerState> _displayerKey = GlobalKey();
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback(
@@ -51,7 +54,7 @@ class _QuizSessionState extends State<QuizSession> {
                 title: const Text('Submit Quiz'),
                 onTap: () {
                   Navigator.pop(context);
-                  debugPrint('submitted Quiz');
+                  _submitQuiz();
                 },
               ),
               ListTile(
@@ -139,8 +142,48 @@ class _QuizSessionState extends State<QuizSession> {
     Navigator.pop(context);
   }
 
-  void _submitQuiz(){
+  void _submitQuiz() async {
 
+    final displayer = _displayerKey.currentState;
+
+    if (displayer == null) return;
+
+    if (!displayer.allAnswered) {
+      final confirm = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Submit Quiz'),
+          content: const Text(
+            'You have unanswered questions. Submit anyway?\n\nUnanswered questions will be counted as wrong.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Submit'),
+            ),
+          ],
+        ),
+      );
+      if (!mounted || confirm != true) return;
+    }
+
+    final graded = displayer.grade();
+    
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ResultsScreen(
+          quizName: widget._quizName,
+          finalScore: graded.finalScore,
+          correctQuestions: graded.correct,
+          incorrectQuestions: graded.incorrect,
+        ),
+      ),
+    );
   }
 
   void _restartQuiz() async{
@@ -198,7 +241,7 @@ class _QuizSessionState extends State<QuizSession> {
           ),
         ],
       ),
-      body: QuestionDisplayer(questions: widget._questions)
+      body: QuestionDisplayer(key: _displayerKey, questions: widget._questions)
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutterquiz/backend/QuizPool.dart';
 import 'package:flutterquiz/widgets/Background.dart';
 import 'package:flutterquiz/widgets/RandQuiz.dart';
 import 'package:flutterquiz/widgets/TakeQuiz.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 class HomePage extends StatefulWidget {
 
   final String userEmail;
@@ -101,7 +102,11 @@ class _HomePageState extends State<HomePage> {
             ListTile(
               leading: Icon(Icons.exit_to_app),
               title: const Text('Logout'),
-              onTap: () {
+              onTap: () async {
+                
+                final SharedPreferences prefs = await SharedPreferences.getInstance();
+                prefs.clear();
+
                 Navigator.pushNamed(context, '/');
               },
             ),

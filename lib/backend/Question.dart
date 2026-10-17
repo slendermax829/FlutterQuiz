@@ -20,6 +20,9 @@ abstract class Question{
 
   const Question(this._stem, this._type);
 
+  /// [answer] is an option index for multiple choice, or text for fill in the blank.
+  bool isCorrect(Object? answer);
+
   factory Question.fromData(Map<String,dynamic> quizData){
     String stem = quizData['stem'];
     
@@ -62,6 +65,9 @@ class MultipleChoice extends Question{
 
   const MultipleChoice(String stem, this._options, this._answerIndex):super(stem,QuestionType.MULTIPLE_CHOICE);
 
+  @override
+  bool isCorrect(Object? answer) => answer is int && answer == _answerIndex;
+
 }
 
 class FillInBlank extends Question{
@@ -70,4 +76,9 @@ class FillInBlank extends Question{
   String get answers => _answers.map((e)=>'${e.toLowerCase().trim()}',).toString();
 
   const FillInBlank(String stem, this._answers):super(stem,QuestionType.FILL_IN_THE_BLANK);
+
+  @override
+  bool isCorrect(Object? answer) =>
+      answer is String &&
+      _answers.any((a) => a.toLowerCase().trim() == answer.toLowerCase().trim());
 }
