@@ -1,7 +1,17 @@
+import 'dart:math' show pow;
+
 import 'package:flutter/material.dart';
 import 'package:flutterquiz/backend/Question.dart';
 import 'package:flutterquiz/widgets/Background.dart';
 import 'package:percent_indicator/flutter_percent_indicator.dart';
+
+extension Trimmer on double{
+  
+  double trim(int digits){
+    num mod = pow(10, digits);
+    return (this * mod).truncate() / mod;
+  }
+}
 
 class ResultsScreen extends StatelessWidget {
   final String _quizName;
@@ -30,6 +40,7 @@ class ResultsScreen extends StatelessWidget {
   }
 
   void _backToHomePage(BuildContext screenContext) {
+    WidgetsBinding.instance.addPostFrameCallback((_)=>changeBackGround(bg: CustomBackgrounds.DEFAULT));
     Navigator.pop(screenContext);
   }
 
@@ -93,67 +104,70 @@ class ResultsScreen extends StatelessWidget {
         child: Container(
           margin: EdgeInsetsGeometry.all(20),
           padding: EdgeInsets.all(16),
-          child: Column(
-            spacing: 20,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  color: Color.fromARGB(84, 0, 0, 0),
-                  border: BoxBorder.all(color: Colors.blue),
-                  borderRadius: BorderRadius.circular(15),
+          child: SingleChildScrollView(
+            child: Column(
+              spacing: 20,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: Color.fromARGB(84, 0, 0, 0),
+                    border: BoxBorder.all(color: Colors.blue),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child:Column(
+                    spacing: 10,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _finalScore >= 70 ? 
+                      Text('PASSED',style: TextStyle(color: const Color.fromARGB(255, 28, 242, 0),fontSize: 25,fontWeight: FontWeight.bold),):
+                      Text('FAILED',style: TextStyle(color: Colors.red,fontSize: 25,fontWeight: FontWeight.bold)),
+                      Text('Quiz: $_quizName',style: TextStyle(color: Colors.white, fontSize: 18),),
+                      Text('Score: $_finalScore%',style: TextStyle(color: Colors.white, fontSize: 18)),
+                      Text('Total number of Questions: $_totalQuestions',style: TextStyle(color: Colors.white),),
+                      Text('Correct Questions: ${_correctQuestions.length}',style: TextStyle(color: Colors.white)),
+                      Text('Incorrect Questions: ${_incorrectQuestions.length}',style: TextStyle(color: Colors.white),)
+                    ],
+                  )
                 ),
-                child:Column(
-                  spacing: 10,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _finalScore >= 70 ? 
-                    Text('PASSED',style: TextStyle(color: const Color.fromARGB(255, 28, 242, 0),fontSize: 25,fontWeight: FontWeight.bold),):
-                    Text('FAILED',style: TextStyle(color: Colors.red,fontSize: 25,fontWeight: FontWeight.bold)),
-                    Text('$_quizName',style: TextStyle(color: Colors.white, fontSize: 18),),
-                    Text('Total number of Questions: $_totalQuestions',style: TextStyle(color: Colors.white),),
-                    Text('Correct Questions: ${_correctQuestions.length}',style: TextStyle(color: Colors.white)),
-                    Text('Incorrect Questions: ${_incorrectQuestions.length}',style: TextStyle(color: Colors.white),)
-                  ],
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: Color.fromARGB(84, 0, 0, 0),
+                    border: BoxBorder.all(color: Colors.blue),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      CircularPercentIndicator(
+                        radius: 45,
+                        lineWidth: 10,
+                        percent: _correctPercent,
+                        header: Text('CORRECT ANSWERS',style: TextStyle(color: Colors.white)),
+                        center: Text('${_correctPercent.trim(2).toString()}%',style: TextStyle(color: Colors.white),),
+                        animation: true,
+                        animationDuration: 1000,
+                        progressColor: Colors.lightGreenAccent,
+                        backgroundColor: Colors.transparent,
+                      ),
+                      CircularPercentIndicator(
+                        radius: 45,
+                        lineWidth: 10,
+                        percent: _incorrectPercent,
+                        header: Text('INCORRECT ANSWERS',style: TextStyle(color: Colors.white)),
+                        center: Text('${_incorrectPercent.trim(2).toString()}%',style: TextStyle(color: Colors.white),),
+                        animation: true,
+                        animationDuration: 1000,
+                        progressColor: const Color.fromARGB(255, 247, 6, 2),
+                        backgroundColor: Colors.transparent,
+                      ),
+                    ],
+                  ),
                 )
-              ),
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  color: Color.fromARGB(84, 0, 0, 0),
-                  border: BoxBorder.all(color: Colors.blue),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    CircularPercentIndicator(
-                      radius: 45,
-                      lineWidth: 10,
-                      percent: _correctPercent,
-                      header: Text('CORRECT ANSWERS',style: TextStyle(color: Colors.white)),
-                      center: Text('${_correctPercent.toString()}%',style: TextStyle(color: Colors.white),),
-                      animation: true,
-                      animationDuration: 1000,
-                      progressColor: Colors.lightGreenAccent,
-                      backgroundColor: Colors.transparent,
-                    ),
-                    CircularPercentIndicator(
-                      radius: 45,
-                      lineWidth: 10,
-                      percent: _incorrectPercent,
-                      header: Text('INCORRECT ANSWERS',style: TextStyle(color: Colors.white)),
-                      center: Text('${_incorrectPercent.toString()}%',style: TextStyle(color: Colors.white),),
-                      animation: true,
-                      animationDuration: 1000,
-                      progressColor: const Color.fromARGB(255, 247, 6, 2),
-                      backgroundColor: Colors.transparent,
-                    ),
-                  ],
-                ),
-              )
-            ],
+              ],
+            ),
           ),
         ), 
       ),

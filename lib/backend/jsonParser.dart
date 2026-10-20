@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:convert';
 
 final _resultsFile = File('flutterquiz/results.json');
+const  Map<String,dynamic> _userResults = {};
 
 class QuizResult{
   final String _user;
@@ -20,7 +21,8 @@ class QuizResult{
       'quiz name': _quizName,
       'final score': _finalScore,
       'correct questions': _correctQuestions,
-      'incorrect questions': _incorrectQuestions
+      'incorrect questions': _incorrectQuestions,
+      'date': _date.toString()
     };
   }
 

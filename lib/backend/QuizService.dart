@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -101,7 +102,7 @@ Future<Quiz?> _fetchQuiz(int quizNum) async{
 Future<({bool response, String reason})> validateUser({required String username, required int pin}) async{
   try{
     var url = Uri.parse('$_loginUrl?user=$username&pin=$pin');
-    var response = await http.get(url);
+    var response = await http.get(url).timeout(const Duration(seconds: 10));
 
     var jsonData = jsonDecode(response.body);
 
@@ -111,5 +112,13 @@ Future<({bool response, String reason})> validateUser({required String username,
     );
   }on QuizServerException catch(e){
     return (response: false, reason: 'An Error had occurred');
+  }on TimeoutException{
+    return (response: false, reason: 'The server took too long to respond');
+  }on SocketException{
+    return (response: false, reason: 'Unable to reach the server');
+  }on http.ClientException{
+    return (response: false, reason: 'Unable to reach the server');
+  }on FormatException{
+    return (response: false, reason: 'Unexpected response from the server');
   }
 }

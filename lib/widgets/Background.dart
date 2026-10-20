@@ -5,7 +5,7 @@ enum CustomBackgrounds{
   DEFAULT([Color.fromARGB(255, 45, 253, 101),Color.fromARGB(255, 39, 180, 251)], .7),
   QUIZ_SESSION([Color.fromARGB(255, 14, 50, 255),Color.fromARGB(255, 140, 0, 255)], .9),
   PASSED([Color.fromARGB(255, 250, 247, 85), Color.fromARGB(255, 100, 239, 6)], .9),
-  FAILED([Color.fromARGB(255, 250, 32, 68),Color.fromARGB(255, 14, 50, 255)], .9);
+  FAILED([Color.fromARGB(255, 250, 32, 68),Color.fromARGB(255, 147, 27, 71)], .9);
 
   final List<Color> colors;
   final double opacity;

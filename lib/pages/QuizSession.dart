@@ -92,7 +92,6 @@ class _QuizSessionState extends State<QuizSession> {
             children: [
               Text('Quiz Name: ${widget._quizName}'),
               Text('Questions: ${widget._questions.length}'),
-              Text(widget._isPractice ? 'Mode: Practice' : 'Mode: Standard'),
             ],
           ),
         );

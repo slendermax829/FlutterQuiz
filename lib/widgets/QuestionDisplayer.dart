@@ -10,6 +10,7 @@ class QuestionDisplayer extends StatefulWidget {
   @override
   State<QuestionDisplayer> createState() => QuestionDisplayerState();
 }
+
 class QuestionDisplayerState extends State<QuestionDisplayer> {
   late Question _currQuestion;
   late int _currentQuestionIndex;
@@ -37,10 +38,11 @@ class QuestionDisplayerState extends State<QuestionDisplayer> {
       final answer = q is MultipleChoice ? _selectedChoices[i] : _typedAnswers[i];
       (answeredQuestions[i] && q.isCorrect(answer) ? correct : incorrect).add(q);
     }
-    var totalQuestions = correct.length + incorrect.length;
-    var score = (correct.length/totalQuestions * 100).round();
 
-    return (finalScore:score ,correct: correct, incorrect: incorrect);
+    var totalQuestions = correct.length + incorrect.length;
+    var score = (correct.length / totalQuestions * 100).round();
+
+    return (finalScore: score, correct: correct, incorrect: incorrect);
   }
 
   @override
@@ -74,13 +76,9 @@ class QuestionDisplayerState extends State<QuestionDisplayer> {
 
     setState(() {
       _setCurrentQuestion(nextQuestionIndex);
-      _textController.text = _typedAnswers[nextQuestionIndex] ?? '';
+      _textController.text = _typedAnswers[nextQuestionIndex] ?? ''; // set the text for the controller to be the saved answer for fill in the blanks
     });
   }
-
-  void _goBack() => _changeQuestion(-1);
-
-  void _goForward() => _changeQuestion(1);
 
   @override
   Widget build(BuildContext context) {
@@ -99,53 +97,39 @@ class QuestionDisplayerState extends State<QuestionDisplayer> {
                 border: BoxBorder.all(color: Colors.blue),
                 borderRadius: BorderRadius.circular(15),
               ),
-              child: Builder(
-                builder: (context) {
-                  return Row(
-                      children: [
-                        Expanded(
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: [
-                                ...List.generate(answeredQuestions.length, (
-                                  index,
-                                ) {
-                                  final isAnswered = answeredQuestions[index];
-                    
-                                  return Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 10),
-                                    child: AnimatedContainer(
-                                      duration: const Duration(milliseconds: 125),
-                                      width: 12,
-                                      height: 12,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        border: index == _currentQuestionIndex
-                                            ? BoxBorder.all(
-                                                color: Colors.yellowAccent,
-                                              )
-                                            : null,
-                                        color: isAnswered
-                                            ? Colors.green
-                                            : Color.fromARGB(145, 79, 79, 79),
-                                      ),
-                                      child: isAnswered
-                                          ? const Icon(
-                                              Icons.check,
-                                              color: Colors.white,
-                                              size: 12,
-                                            )
-                                          : const SizedBox.shrink(),
-                                    ),
-                                  );
-                                }),
-                              ],
-                            ),
+              child: LayoutBuilder( // a small bar above that represents the questions answered or not
+                builder: (context, constraints) {
+                  final count = answeredQuestions.length;
+                  if (count == 0) return const SizedBox(height: 24);
+                  const maxDot = 12.0;
+                  const outerPad = 8.0;
+                  final slot = (constraints.maxWidth - 2 * outerPad) / count;
+                  final gap = (slot * 0.25).clamp(1.0, 20.0);
+                  final dot = (slot - gap).clamp(3.0, maxDot);
+
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: outerPad,
+                      vertical: 6,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: List.generate(count, (index) {
+                        final isAnswered = answeredQuestions[index];
+
+                        return AnimatedContainer(
+                          duration: const Duration(milliseconds: 125),
+                          width: dot,
+                          height: dot,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: index == _currentQuestionIndex ? Border.all(color: Colors.yellowAccent): null,
+                            color: isAnswered ? Colors.green: const Color.fromARGB(145, 79, 79, 79),
                           ),
-                        ),
-                      ],
-                    );
+                        );
+                      }),
+                    ),
+                  );
                 },
               ),
             ),
@@ -162,15 +146,21 @@ class QuestionDisplayerState extends State<QuestionDisplayer> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(iconColor: Colors.blue, backgroundColor: Color.fromARGB(160, 119, 119, 119)),
-                    onPressed: _isFirstQuestion ? null : _goBack,
-                    child: Icon(Icons.arrow_back)
+                    style: ElevatedButton.styleFrom(
+                      iconColor: Colors.blue,
+                      backgroundColor: Color.fromARGB(160, 119, 119, 119),
+                    ),
+                    onPressed: _isFirstQuestion ? null : () => _changeQuestion(-1),
+                    child: Icon(Icons.arrow_back),
                   ),
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(iconColor: Colors.blue, backgroundColor: Color.fromARGB(160, 119, 119, 119)),
-                    onPressed: _isLastQuestion ? null : _goForward,
-                    child: Icon(Icons.arrow_forward)
-                  )
+                    style: ElevatedButton.styleFrom(
+                      iconColor: Colors.blue,
+                      backgroundColor: Color.fromARGB(160, 119, 119, 119),
+                    ),
+                    onPressed: _isLastQuestion ? null : () => _changeQuestion(1),
+                    child: Icon(Icons.arrow_forward),
+                  ),
                 ],
               ),
             ),
@@ -190,20 +180,17 @@ class QuestionDisplayerState extends State<QuestionDisplayer> {
                       color: Colors.white,
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
-                      decoration: TextDecoration.underline
+                      decoration: TextDecoration.underline,
                     ),
                   ),
                   SizedBox(height: 5),
                   Text(
                     _currQuestion.stem,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white, 
-                      fontSize: 14
-                      ),
+                    style: TextStyle(color: Colors.white, fontSize: 14),
                   ),
                   SizedBox(height: 16),
-                  if (_currQuestion case final MultipleChoice mc)
+                  if (_currQuestion case final MultipleChoice mc) // when the current question is a multiple choice
                     RadioGroup<int>(
                       groupValue: _selectedChoices[_currentQuestionIndex],
                       onChanged: (value) {
@@ -220,13 +207,17 @@ class QuestionDisplayerState extends State<QuestionDisplayer> {
                               value: i,
                               title: Text(
                                 option,
-                                style: const TextStyle(color: Colors.white, fontSize: 12),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                ),
                               ),
+                              activeColor: Colors.lightBlue,
                             ),
                         ],
                       ),
                     )
-                  else if (_currQuestion is FillInBlank)
+                  else if (_currQuestion is FillInBlank) // When current question is a fill in the blank
                     Padding(
                       padding: const EdgeInsets.all(12),
                       child: TextField(
@@ -234,9 +225,15 @@ class QuestionDisplayerState extends State<QuestionDisplayer> {
                         style: const TextStyle(color: Colors.white),
                         decoration: const InputDecoration(
                           isDense: true,
-                          contentPadding: EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 5,
+                            vertical: 10,
+                          ),
                           labelText: 'Your answer',
-                          labelStyle: TextStyle(color: Colors.white70, fontSize: 12 ),
+                          labelStyle: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 12,
+                          ),
                           border: OutlineInputBorder(),
                         ),
                         onChanged: (text) {
