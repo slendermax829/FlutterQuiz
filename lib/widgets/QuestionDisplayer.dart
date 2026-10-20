@@ -30,13 +30,15 @@ class QuestionDisplayerState extends State<QuestionDisplayer> {
   bool get allAnswered => answeredQuestions.every((a) => a);
 
   /// Unanswered questions are counted as incorrect.
-  ({int finalScore, List<Question> correct, List<Question> incorrect}) grade() {
-    final correct = <Question>[];
-    final incorrect = <Question>[];
+  ({int finalScore, List<(String, Question)> correct, List<(String, Question)> incorrect}) grade() {
+    final correct = <(String, Question)>[];
+    final incorrect = <(String, Question)>[];
 
     for (final (i, q) in widget._questions.indexed) {
-      final answer = q is MultipleChoice ? _selectedChoices[i] : _typedAnswers[i];
-      (answeredQuestions[i] && q.isCorrect(answer) ? correct : incorrect).add(q);
+      var answer = q is MultipleChoice ? _selectedChoices[i] : _typedAnswers[i];
+      (answeredQuestions[i] && q.isCorrect(answer) ? correct : incorrect).add((
+        q is MultipleChoice ? (_selectedChoices[i] == null ? '' : q.getOption(_selectedChoices[i]!)) : (_typedAnswers[i] ?? ''),q)
+      );
     }
 
     var totalQuestions = correct.length + incorrect.length;
@@ -66,7 +68,7 @@ class QuestionDisplayerState extends State<QuestionDisplayer> {
     _currQuestion = widget._questions[questionIndex];
   }
 
-  void _changeQuestion(int step) {
+  void _changeQuestion(int step){
     final nextQuestionIndex = _currentQuestionIndex + step;
 
     if (nextQuestionIndex < 0 ||

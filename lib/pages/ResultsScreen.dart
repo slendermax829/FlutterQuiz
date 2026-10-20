@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutterquiz/backend/Question.dart';
 import 'package:flutterquiz/widgets/Background.dart';
 import 'package:percent_indicator/flutter_percent_indicator.dart';
+import 'package:flutterquiz/widgets/QuestionReviewer.dart';
 
 extension Trimmer on double{
   
@@ -14,17 +15,20 @@ extension Trimmer on double{
 }
 
 class ResultsScreen extends StatelessWidget {
+
+  final GlobalKey<QuestionReviewerState> _reviewerKey = GlobalKey();
+
   final String _quizName;
   final int _finalScore;
-  final List<Question> _correctQuestions;
-  final List<Question> _incorrectQuestions;
+  final List<(String, Question)> _correctQuestions;
+  final List<(String, Question)> _incorrectQuestions;
 
-  const ResultsScreen({
+  ResultsScreen({
     super.key,
     required String quizName,
     required int finalScore,
-    required List<Question> correctQuestions,
-    required List<Question> incorrectQuestions,
+    required List<(String, Question)> correctQuestions,
+    required List<(String, Question)> incorrectQuestions,
   }) : _quizName = quizName,
        _finalScore = finalScore,
        _correctQuestions = correctQuestions,
@@ -42,10 +46,6 @@ class ResultsScreen extends StatelessWidget {
   void _backToHomePage(BuildContext screenContext) {
     WidgetsBinding.instance.addPostFrameCallback((_)=>changeBackGround(bg: CustomBackgrounds.DEFAULT));
     Navigator.pop(screenContext);
-  }
-
-  void _reviewQuiz(){
-    debugPrint('reviewing quiz');
   }
 
   @override
@@ -71,11 +71,6 @@ class ResultsScreen extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      ListTile(
-                        leading: Icon(Icons.search),
-                        title: Text('Review Quiz'),
-                        onTap: ()=> _reviewQuiz(),
-                      ),
                       ListTile(
                         leading: Icon(Icons.save),
                         title: Text('Save Quiz'),
@@ -106,7 +101,7 @@ class ResultsScreen extends StatelessWidget {
           padding: EdgeInsets.all(16),
           child: SingleChildScrollView(
             child: Column(
-              spacing: 20,
+              spacing: 10,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -146,7 +141,7 @@ class ResultsScreen extends StatelessWidget {
                         lineWidth: 10,
                         percent: _correctPercent,
                         header: Text('CORRECT ANSWERS',style: TextStyle(color: Colors.white)),
-                        center: Text('${_correctPercent.trim(2).toString()}%',style: TextStyle(color: Colors.white),),
+                        center: Text('${(_correctPercent.trim(2)*100).toString()}%',style: TextStyle(color: Colors.white),),
                         animation: true,
                         animationDuration: 1000,
                         progressColor: Colors.lightGreenAccent,
@@ -157,7 +152,7 @@ class ResultsScreen extends StatelessWidget {
                         lineWidth: 10,
                         percent: _incorrectPercent,
                         header: Text('INCORRECT ANSWERS',style: TextStyle(color: Colors.white)),
-                        center: Text('${_incorrectPercent.trim(2).toString()}%',style: TextStyle(color: Colors.white),),
+                        center: Text('${(_incorrectPercent.trim(2)*100).toString()}%',style: TextStyle(color: Colors.white),),
                         animation: true,
                         animationDuration: 1000,
                         progressColor: const Color.fromARGB(255, 247, 6, 2),
@@ -165,7 +160,8 @@ class ResultsScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                )
+                ),
+                QuestionReviewer(correctQuestions: _correctQuestions, incorrectQuestions: _incorrectQuestions)
               ],
             ),
           ),

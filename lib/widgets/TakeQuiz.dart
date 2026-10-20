@@ -13,8 +13,7 @@ class TakeQuiz extends StatefulWidget {
 }
 
 class _TakeQuizState extends State<TakeQuiz> {
-  bool _isPractice = false;
-
+  
   void _confirmQuiz(Quiz selectedQuiz) async {
     final confirm = await showDialog<bool>(
       context: context,
@@ -29,7 +28,6 @@ class _TakeQuizState extends State<TakeQuiz> {
             children: [
               Text('Quiz Name: ${selectedQuiz.name}'),
               Text('Number of Questions: ${selectedQuiz.numQuestions}\n'),
-              Text(_isPractice ? 'PRACTICE ENABLED' : 'PRACTICE DISABLED'),
             ],
           ),
           actions: [
@@ -142,18 +140,6 @@ class _TakeQuizState extends State<TakeQuiz> {
                     );
                   },
                 ),
-              ),
-              SwitchListTile(
-                title: const Text(
-                  'Practice mode',
-                  style: TextStyle(color: Colors.white),
-                ),
-                value: _isPractice,
-                onChanged: (value) => setState(() => _isPractice = value),
-                inactiveTrackColor: Colors.transparent,
-                inactiveThumbColor: const Color.fromARGB(255, 29, 12, 211),
-                activeThumbColor: Colors.lightBlue,
-                hoverColor: Colors.transparent,
               ),
             ],
           ),

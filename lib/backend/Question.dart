@@ -60,7 +60,7 @@ class MultipleChoice extends Question{
 
   List<String> get choices => List.unmodifiable(_options);
 
-  String get answer => _options.asMap().entries.firstWhere((e) => e.key == _answerIndex).toString();
+  String get answer => _options.asMap().entries.firstWhere((e) => e.key == _answerIndex).value.toString();
   String get options => _options.asMap().entries.map((e)=>'${e.key+1} ${e.value}').toString();
 
   const MultipleChoice(String stem, this._options, this._answerIndex):super(stem,QuestionType.MULTIPLE_CHOICE);
@@ -68,6 +68,7 @@ class MultipleChoice extends Question{
   @override
   bool isCorrect(Object? answer) => answer is int && answer == _answerIndex;
 
+  String getOption(int index) => _options[index];
 }
 
 class FillInBlank extends Question{

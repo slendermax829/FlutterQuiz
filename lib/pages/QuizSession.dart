@@ -170,7 +170,7 @@ class _QuizSessionState extends State<QuizSession> {
       if (!mounted || confirm != true) return;
     }
 
-    final graded = displayer.grade();
+    final graded = displayer.grade(); // gets the grade for the current quiz session
     
     Navigator.pushReplacement(
       context,
