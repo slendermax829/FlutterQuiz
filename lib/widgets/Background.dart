@@ -43,21 +43,33 @@ class _BackgroundState extends State<Background> {
   @override
   Widget build(BuildContext context) {
     return Positioned.fill(
-      child: ValueListenableBuilder(
-        valueListenable: bgNotifier, 
-        builder: (context,bg,_) => Opacity(
-          opacity: bg._opacity,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: bg._colors
-              )
-            )
+      child: ValueListenableBuilder<BackgroundState>(
+        valueListenable: bgNotifier,
+        builder: (context, bg, _) => AnimatedSwitcher(
+          duration: const Duration(milliseconds: 700),
+          switchInCurve: Curves.easeInOut,
+          switchOutCurve: Curves.easeInOut,
+          layoutBuilder: (current, previous) => Stack(
+            fit: StackFit.expand,
+            children: [...previous, if (current != null) current],
+          ),
+          child: Opacity(
+            key: ObjectKey(bg),
+            opacity: bg._opacity,
+            child: SizedBox.expand(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: bg._colors,
+                  ),
+                ),
+              ),
             ),
-        )
-        )
-      );
+          ),
+        ),
+      ),
+    );
   }
 }

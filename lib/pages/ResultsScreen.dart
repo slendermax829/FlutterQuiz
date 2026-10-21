@@ -2,9 +2,11 @@ import 'dart:math' show pow;
 
 import 'package:flutter/material.dart';
 import 'package:flutterquiz/backend/Question.dart';
+import 'package:flutterquiz/backend/QuizResults.dart';
 import 'package:flutterquiz/widgets/Background.dart';
 import 'package:percent_indicator/flutter_percent_indicator.dart';
 import 'package:flutterquiz/widgets/QuestionReviewer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 extension Trimmer on double{
   
@@ -14,9 +16,7 @@ extension Trimmer on double{
   }
 }
 
-class ResultsScreen extends StatelessWidget {
-
-  final GlobalKey<QuestionReviewerState> _reviewerKey = GlobalKey();
+class ResultsScreen extends StatefulWidget {
 
   final String _quizName;
   final int _finalScore;
@@ -34,13 +34,50 @@ class ResultsScreen extends StatelessWidget {
        _correctQuestions = correctQuestions,
        _incorrectQuestions = incorrectQuestions;
 
-  int get _totalQuestions => [..._correctQuestions, ..._incorrectQuestions].length;
+  @override
+  State<ResultsScreen> createState() => _ResultsScreenState();
+}
 
-  double get _correctPercent => (_correctQuestions.length/_totalQuestions);
-  double get _incorrectPercent => (_incorrectQuestions.length/_totalQuestions);
+class _ResultsScreenState extends State<ResultsScreen> {
+  final GlobalKey<QuestionReviewerState> _reviewerKey = GlobalKey();
 
-  void _saveQuiz(){
-    debugPrint('saving quiz');
+  bool isSaved = false;
+
+  int get _totalQuestions => [...widget._correctQuestions, ...widget._incorrectQuestions].length;
+
+  double get _correctPercent => (widget._correctQuestions.length/_totalQuestions);
+
+  double get _incorrectPercent => (widget._incorrectQuestions.length/_totalQuestions);
+
+  void _saveResults() async{
+    //debugPrint('...saving results');
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance(); // get current user *username
+    try{
+      final username = prefs.getString('saved_username') ?? '';
+      await saveQuizResult(QuizResult(
+        username: username,
+        quizName: widget._quizName,
+        score: widget._finalScore,
+        correct: widget._correctQuestions.length,
+        incorrect: widget._incorrectQuestions.length,
+        total: _totalQuestions,
+        takenAt: DateTime.now(),
+      ));
+      _displaySubmitMessage(message: 'Results Saved', displayColor: Colors.green);
+    }catch(e){
+      _displaySubmitMessage(message: 'Error saving quiz $e');
+    }
+  }
+
+  void _displaySubmitMessage({String message = '', Color displayColor = Colors.amberAccent}){
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message, style: TextStyle(color: Colors.black)),
+        duration: const Duration(seconds: 3),
+        backgroundColor: displayColor,
+      ),
+    );
   }
 
   void _backToHomePage(BuildContext screenContext) {
@@ -52,7 +89,7 @@ class ResultsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenContext = context;
     WidgetsBinding.instance.addPostFrameCallback((_){
-      _finalScore < 70 ? changeBackGround(bg: CustomBackgrounds.FAILED) : changeBackGround(bg: CustomBackgrounds.PASSED);
+      widget._finalScore < 70 ? changeBackGround(bg: CustomBackgrounds.FAILED) : changeBackGround(bg: CustomBackgrounds.PASSED);
     });
 
     return Scaffold(
@@ -73,8 +110,16 @@ class ResultsScreen extends StatelessWidget {
                     children: [
                       ListTile(
                         leading: Icon(Icons.save),
-                        title: Text('Save Quiz'),
-                        onTap: () => _saveQuiz(),
+                        title: Text('Save Results'),
+                        onTap: () {
+                          if(!isSaved){
+                            _saveResults();
+                            isSaved = true;
+                          }else{
+                            _displaySubmitMessage(message: 'Quiz already saved');
+                          }
+                          Navigator.pop(context);
+                        },
                       ),
                       ListTile(
                         leading: Icon(Icons.exit_to_app),
@@ -115,14 +160,14 @@ class ResultsScreen extends StatelessWidget {
                     spacing: 10,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _finalScore >= 70 ? 
+                      widget._finalScore >= 70 ? 
                       Text('PASSED',style: TextStyle(color: const Color.fromARGB(255, 28, 242, 0),fontSize: 25,fontWeight: FontWeight.bold),):
                       Text('FAILED',style: TextStyle(color: Colors.red,fontSize: 25,fontWeight: FontWeight.bold)),
-                      Text('Quiz: $_quizName',style: TextStyle(color: Colors.white, fontSize: 18),),
-                      Text('Score: $_finalScore%',style: TextStyle(color: Colors.white, fontSize: 18)),
+                      Text('Quiz: ${widget._quizName}',style: TextStyle(color: Colors.white, fontSize: 18),),
+                      Text('Score: ${widget._finalScore}%',style: TextStyle(color: Colors.white, fontSize: 18)),
                       Text('Total number of Questions: $_totalQuestions',style: TextStyle(color: Colors.white),),
-                      Text('Correct Questions: ${_correctQuestions.length}',style: TextStyle(color: Colors.white)),
-                      Text('Incorrect Questions: ${_incorrectQuestions.length}',style: TextStyle(color: Colors.white),)
+                      Text('Correct Questions: ${widget._correctQuestions.length}',style: TextStyle(color: Colors.white)),
+                      Text('Incorrect Questions: ${widget._incorrectQuestions.length}',style: TextStyle(color: Colors.white),)
                     ],
                   )
                 ),
@@ -137,22 +182,22 @@ class ResultsScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       CircularPercentIndicator(
-                        radius: 45,
-                        lineWidth: 10,
+                        radius: 35,
+                        lineWidth: 5,
                         percent: _correctPercent,
-                        header: Text('CORRECT ANSWERS',style: TextStyle(color: Colors.white)),
-                        center: Text('${(_correctPercent.trim(2)*100).toString()}%',style: TextStyle(color: Colors.white),),
+                        header: Text('CORRECT ANSWERS',style: TextStyle(color: Colors.white, fontSize: 12)),
+                        center: Text('${(_correctPercent.trim(2)*100).toString()}%',style: TextStyle(color: Colors.white, fontSize: 14),),
                         animation: true,
                         animationDuration: 1000,
                         progressColor: Colors.lightGreenAccent,
                         backgroundColor: Colors.transparent,
                       ),
                       CircularPercentIndicator(
-                        radius: 45,
-                        lineWidth: 10,
+                        radius: 35,
+                        lineWidth: 5,
                         percent: _incorrectPercent,
-                        header: Text('INCORRECT ANSWERS',style: TextStyle(color: Colors.white)),
-                        center: Text('${(_incorrectPercent.trim(2)*100).toString()}%',style: TextStyle(color: Colors.white),),
+                        header: Text('INCORRECT ANSWERS',style: TextStyle(color: Colors.white, fontSize: 12)),
+                        center: Text('${(_incorrectPercent.trim(2)*100).toString()}%',style: TextStyle(color: Colors.white, fontSize: 14),),
                         animation: true,
                         animationDuration: 1000,
                         progressColor: const Color.fromARGB(255, 247, 6, 2),
@@ -161,7 +206,7 @@ class ResultsScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                QuestionReviewer(correctQuestions: _correctQuestions, incorrectQuestions: _incorrectQuestions)
+                QuestionReviewer(correctQuestions: widget._correctQuestions, incorrectQuestions: widget._incorrectQuestions)
               ],
             ),
           ),

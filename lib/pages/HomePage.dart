@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutterquiz/backend/QuizPool.dart';
 import 'package:flutterquiz/widgets/Background.dart';
+import 'package:flutterquiz/widgets/QuizResultsViewer.dart';
 import 'package:flutterquiz/widgets/RandQuiz.dart';
 import 'package:flutterquiz/widgets/TakeQuiz.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,7 +21,8 @@ class _HomePageState extends State<HomePage> {
   final _pages = const [
     TakeQuiz(),
     RandQuiz(),
-    Text('index 2 - Results'),
+    //Text('index 2 - Results'),
+    QuizResultsViewer()
   ];
 
   final Map<String,Icon> _icons = const {

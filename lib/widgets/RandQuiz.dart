@@ -154,43 +154,43 @@ class _RandQuizState extends State<RandQuiz> {
                     border: BoxBorder.all(color: Colors.blue),
                     borderRadius: BorderRadius.circular(15),
                   ),
-                  child: const Text(
-                    'Random Quiz',
-                    style: TextStyle(color: Colors.white, fontSize: 22),
-                  ),
-                ),
-                DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: Color.fromARGB(84, 0, 0, 0),
-                    border: BoxBorder.all(color: Colors.blue),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
                   child: Container(
                     margin: EdgeInsetsGeometry.all(5),
                     padding: const EdgeInsets.all(5.0),
-                    child: TextFormField(
-                      controller: _textController,
-                      style: TextStyle(color: Colors.white),
-                      cursorColor: Colors.white,
-                      decoration: InputDecoration(
-                        label: Text('Quiz Name'),
-                        labelStyle: TextStyle(color: Colors.white),
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'Random Quiz',
+                          style: TextStyle(color: Colors.white, fontSize: 22),
                         ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
+                        SizedBox(height: 10),
+                        TextFormField(
+                          controller: _textController,
+                          style: TextStyle(color: Colors.white),
+                          cursorColor: Colors.white,
+                          decoration: InputDecoration(
+                            label: Text('Quiz Name'),
+                            labelStyle: TextStyle(color: Colors.white),
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'A name must be filled out';
+                            }
+                            return null;
+                          },
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'A name must be filled out';
-                        }
-                        return null;
-                      },
+                      ],
                     ),
                   ),
                 ),

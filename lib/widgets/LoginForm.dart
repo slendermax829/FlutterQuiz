@@ -27,7 +27,20 @@ class _LoginFormState extends State<LoginForm> {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('saved_username', username);
 
-      Navigator.push(context, MaterialPageRoute(builder: (context)=> LoadingPage(userEmail: _userController.text)));
+      //Navigator.push(context, MaterialPageRoute(builder: (context)=> LoadingPage(userEmail: _userController.text)));
+      Navigator.push(
+        context,
+        PageRouteBuilder(
+          pageBuilder:(context, animation, secondaryAnimation) => LoadingPage(userEmail: _userController.text),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+          transitionDuration: Duration(milliseconds: 300)
+        )
+      );
     }else{
       displayMessage('LOGIN FAILED', Colors.red);
     }
