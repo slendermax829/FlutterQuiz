@@ -1,17 +1,25 @@
-# flutterquiz
+# FlutterQuiz
 
-A new Flutter project.
+A Flutter-based quiz application built from the Flutter framework.
 
-## Getting Started
+## Key Features
 
-This project is a starting point for a Flutter application.
+- Interactive quiz functionality
+- Randomized quiz creation
+- Score tracking
+- Result summary at the end of a quiz
+- Save quiz result data
 
-A few resources to get you started if this is your first Flutter project:
+## Pub Packages
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+The following Flutter packages are used in this project:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- `http`: For making quiz network requests
+- `percent_indicator`: For displaying quiz scores visually
+- `intl`: For internationalization and formatting dates
+- `path_provider`: For accessing commonly used locations on the device's file system
+- `shared_preferences`: For saving quiz result data locally
+
+
+#
+![Flutter Logo](https://flutter.dev/assets/lockup_flutter_horizontal.549a1b7dd82615e8e9c95c1ade8cee42.svg)
