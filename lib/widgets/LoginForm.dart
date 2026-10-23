@@ -151,21 +151,19 @@ class _LoginFormState extends State<LoginForm> {
               ),
               Builder(
                 builder: (context) {
-                  return Row(
-                    children: [
-                      ElevatedButton(
-                        child: Text('Log in'),
-                        onPressed: () {
-                          if (Form.of(context).validate()) {
-                            _checkForm();
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.teal,
-                          foregroundColor: Colors.white,
-                        ),
+                  return Center(
+                    child: ElevatedButton(
+                      child: Text('Log in'),
+                      onPressed: () {
+                        if (Form.of(context).validate()) {
+                          _checkForm();
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.teal,
+                        foregroundColor: Colors.white,
                       ),
-                    ],
+                    ),
                   );
                 },
               ),

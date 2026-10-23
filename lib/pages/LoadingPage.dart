@@ -33,10 +33,16 @@ class _LoadingPageState extends State<LoadingPage> {
     if (!mounted) return;
     
     Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) => HomePage(userEmail: widget.userEmail),
-      ),
+      context, 
+      PageRouteBuilder(
+        pageBuilder:(context, animation, secondaryAnimation) => HomePage(userEmail: widget.userEmail),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(
+            opacity: animation,
+            child: child
+          );
+        },
+      )
     );
   }
 

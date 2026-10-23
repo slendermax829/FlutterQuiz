@@ -46,15 +46,17 @@ class _QuizResultsViewerState extends State<QuizResultsViewer> {
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              if (_results.isEmpty)
-                const Text('No results saved.\nTry taking a regular quiz or a random quiz')
+              if (_results.isEmpty) ...[
+                const Text('No results saved.', style: TextStyle(color: Colors.white),),
+                const Text('Try taking a regular quiz or a random quiz', style: TextStyle(color: Colors.white))
+              ]
               else ...[
                 const Text('Your Results', style: TextStyle(color: Colors.white, fontSize: 24),),
                 Expanded(
                   child: ListView.builder(
                   itemCount: _results.length,
                   itemBuilder:(context, index) {
-                    final result = _results[index];
+                    final result = _results[index]; // curr result
                     return ListTile(
                       tileColor: Colors.transparent,
                       leading: CircleAvatar(

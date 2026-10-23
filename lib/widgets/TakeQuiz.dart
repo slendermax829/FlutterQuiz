@@ -27,40 +27,22 @@ class _TakeQuizState extends State<TakeQuiz> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text('Quiz Name: ${selectedQuiz.name}'),
-              Text('Number of Questions: ${selectedQuiz.numQuestions}\n'),
+              Text('Number of Questions: ${selectedQuiz.numQuestions}'),
             ],
           ),
           actions: [
             FilledButton(
-              style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.resolveWith<Color>((
-                  states,
-                ) {
-                  if (states.contains(WidgetState.hovered)) {
-                    return Colors.blue.shade300;
-                  }
-                  if (states.contains(WidgetState.pressed)) {
-                    return Colors.blue.shade800;
-                  }
-                  return Colors.blue;
-                }),
+              style: FilledButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.blue,
               ),
               onPressed: () => Navigator.pop(context, false),
               child: const Text('Cancel'),
             ),
             FilledButton(
-              style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.resolveWith<Color>((
-                  states,
-                ) {
-                  if (states.contains(WidgetState.hovered)) {
-                    return Colors.blue.shade300;
-                  }
-                  if (states.contains(WidgetState.pressed)) {
-                    return Colors.blue.shade800;
-                  }
-                  return Colors.blue;
-                }),
+              style: FilledButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.blue,
               ),
               onPressed: () => Navigator.pop(context, true),
               child: const Text('Take Quiz'),
@@ -71,15 +53,18 @@ class _TakeQuizState extends State<TakeQuiz> {
     );
 
     if ((confirm ?? false) && mounted) {
-      
-      await Navigator.push<void>(
+
+      await Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => QuizSession(
-            questions: selectedQuiz.questions,
-            quizName: selectedQuiz.name,
-          ),
-        ),
+        PageRouteBuilder(
+          pageBuilder:(context, animation, secondaryAnimation) => QuizSession(questions: selectedQuiz.questions, quizName: selectedQuiz.name),
+          transitionsBuilder: (context, animation, secondaryAnimation, child){
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+        )
       );
     
       if (mounted) setToDefault();

@@ -111,3 +111,14 @@ Future<List<QuizResult>> getUserResults(String username) async{
     return [];
   }
 }
+
+Future<void> clearUserResults(String username) async{
+  final results = await _loadQuizResults();
+
+  final file = await _resultsFile();
+
+  await file.writeAsString(
+    const JsonEncoder.withIndent('  ').convert([for (final r in results) if(r.username != username) r.toJson()]),
+    flush: true,
+  );
+}

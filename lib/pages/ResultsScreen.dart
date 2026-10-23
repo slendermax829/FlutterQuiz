@@ -81,7 +81,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
   }
 
   void _backToHomePage(BuildContext screenContext) {
-    WidgetsBinding.instance.addPostFrameCallback((_)=>changeBackGround(bg: CustomBackgrounds.DEFAULT));
+    WidgetsBinding.instance.addPostFrameCallback((_) => changeBackGround(bg: CustomBackgrounds.DEFAULT));
     Navigator.pop(screenContext);
   }
 

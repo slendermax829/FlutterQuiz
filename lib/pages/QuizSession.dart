@@ -23,7 +23,7 @@ class QuizSession extends StatefulWidget {
 }
 
 class _QuizSessionState extends State<QuizSession> {
-  final GlobalKey<QuestionDisplayerState> _displayerKey = GlobalKey();
+  final GlobalKey<QuestionDisplayerState> _displayerKey = GlobalKey(); // to link data for current quiz data
 
   @override
   void initState() {
@@ -80,15 +80,66 @@ class _QuizSessionState extends State<QuizSession> {
     );
   }
 
+  void _restartQuiz() async{
+    final confirm = await showDialog<bool>(
+      context: context, 
+      builder: (context){
+        return AlertDialog(
+          actionsAlignment: MainAxisAlignment.center,
+          backgroundColor: Colors.blue.shade100,
+          title: const Text('Restart Quiz'),
+          content: const Text('Do you want to restart your current quiz session?\n\nNote: Questions will not be saved'),
+          actions: [
+            FilledButton(
+              style: FilledButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.blue,
+              ),
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              style: FilledButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.blue
+              ),
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Confirm'),
+            ),
+          ],
+        );
+      }
+    );
+
+    if (!mounted || confirm != true) {
+      return;
+    }
+
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => QuizSession(
+          quizName: widget._quizName,
+          questions: widget._questions,
+          isPractice: widget._isPractice,
+        ),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+      ),
+    );
+  }
+
   void _displayInfo() async {
     await showDialog<void>(
       context: context,
       builder: (context) {
         return AlertDialog(
+          backgroundColor: Colors.blue.shade100,
           title: const Center(child: Text('Quiz Info')),
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text('Quiz Name: ${widget._quizName}'),
               Text('Questions: ${widget._questions.length}'),
@@ -104,30 +155,26 @@ class _QuizSessionState extends State<QuizSession> {
       context: context,
       builder: (context) {
         return AlertDialog(
+          actionsAlignment: MainAxisAlignment.center,
           title: Text('Quit current quiz?'),
           content: Text('Would you like to quit your current session?'),
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.blue.shade100,
           actions: [
-            TextButton(
+            FilledButton(
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white
+              ),
               onPressed: () => Navigator.pop(context, false),
-              child: Text('No'),
+              child: Text('Cancel'),
             ),
             FilledButton(
-              style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.resolveWith<Color>((
-                  states,
-                ) {
-                  if (states.contains(WidgetState.hovered)) {
-                    return Colors.redAccent;
-                  }
-                  if (states.contains(WidgetState.pressed)) {
-                    return Colors.red.shade700;
-                  }
-                  return Colors.redAccent;
-                }),
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white
               ),
               onPressed: () => Navigator.pop(context, true),
-              child: Text('Yes'),
+              child: Text('Confirm'),
             ),
           ],
         );
@@ -143,7 +190,7 @@ class _QuizSessionState extends State<QuizSession> {
 
   void _submitQuiz() async {
 
-    final displayer = _displayerKey.currentState;
+    final displayer = _displayerKey.currentState; // get the question displayer results
 
     if (displayer == null) return;
 
@@ -151,16 +198,26 @@ class _QuizSessionState extends State<QuizSession> {
       final confirm = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
+          actionsAlignment: MainAxisAlignment.center,
+          backgroundColor: Colors.blue.shade100,
           title: const Text('Submit Quiz'),
           content: const Text(
-            'You have unanswered questions. Submit anyway?\n\nUnanswered questions will be counted as wrong.',
+            'You have unanswered questions. Submit anyway?\n\nWARNING: Unanswered questions will be counted as incorrect.',
           ),
           actions: [
-            TextButton(
+            FilledButton(
+              style: FilledButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.blue,
+              ),
               onPressed: () => Navigator.pop(context, false),
               child: const Text('Cancel'),
             ),
             FilledButton(
+              style: FilledButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.red
+              ),
               onPressed: () => Navigator.pop(context, true),
               child: const Text('Submit'),
             ),
@@ -174,54 +231,27 @@ class _QuizSessionState extends State<QuizSession> {
     
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
-        builder: (context) => ResultsScreen(
+      PageRouteBuilder(
+        transitionDuration: const Duration(milliseconds: 350),
+        reverseTransitionDuration: const Duration(milliseconds: 350),
+        pageBuilder: (context, animation, secondaryAnimation) => ResultsScreen(
           quizName: widget._quizName,
           finalScore: graded.finalScore,
           correctQuestions: graded.correct,
           incorrectQuestions: graded.incorrect,
         ),
-      ),
-    );
-  }
-
-  void _restartQuiz() async{
-    final confirm = await showDialog<bool>(
-      context: context, 
-      builder: (context){
-        return AlertDialog(
-          title: const Text('Restart Quiz'),
-          content: const Text('Do you want to restart your current quiz session?\n\nNote: Questions will not be saved'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context,false), 
-              child: const Text('Cancel')
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(
+            opacity: CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeInOut,
             ),
-            FilledButton(
-              onPressed: () => Navigator.pop(context, true), 
-              child: const Text('Confirm')
-            )
-          ],
-        );
-      }
-    );
-
-    if (!mounted || confirm != true) {
-      return;
-    }
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => QuizSession(
-          quizName: widget._quizName,
-          questions: widget._questions,
-          isPractice: widget._isPractice,
-        ),
+            child: child,
+          );
+        },
       ),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {

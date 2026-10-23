@@ -119,15 +119,29 @@ class _RandQuizState extends State<RandQuiz> {
         return;
       }
 
-      await Navigator.push<void>(
+      // await Navigator.push<void>(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => QuizSession(
+      //       questions: randQuestions,
+      //       quizName: name,
+      //     ),
+      //   ),
+      // );
+
+      await Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => QuizSession(
-            questions: randQuestions,
-            quizName: name,
-          ),
-        ),
+        PageRouteBuilder(
+          pageBuilder:(context, animation, secondaryAnimation) => QuizSession(quizName: name, questions: randQuestions),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+        )
       );
+      
       if (mounted) setToDefault();
     }
   }

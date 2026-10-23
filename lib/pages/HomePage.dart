@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutterquiz/backend/QuizPool.dart';
+import 'package:flutterquiz/pages/TitlePage.dart';
 import 'package:flutterquiz/widgets/Background.dart';
 import 'package:flutterquiz/widgets/QuizResultsViewer.dart';
 import 'package:flutterquiz/widgets/RandQuiz.dart';
 import 'package:flutterquiz/widgets/TakeQuiz.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutterquiz/backend/QuizResults.dart';
 class HomePage extends StatefulWidget {
 
   final String userEmail;
@@ -41,6 +42,66 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) => setToDefault());
     super.initState();
+  }
+
+  Future<void> _confirmClearData() async{
+    final confirm = await showDialog<bool>(
+      context: context, 
+      builder: (context){
+        return AlertDialog(
+          backgroundColor: Colors.blue.shade100,
+          actionsAlignment: MainAxisAlignment.center,
+          alignment: Alignment.center,
+          title: Text('Clear Result Data?'),
+          content: Text(
+            'Do you want to clear your result data?',
+          ),
+          actions: [
+            FilledButton(
+              style: FilledButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.red,
+              ),
+              onPressed: () => Navigator.pop(context, true), 
+              child: Text('Confirm')
+            ),
+            FilledButton(
+              style: FilledButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.blue
+              ),
+              onPressed: () => Navigator.pop(context, false), 
+              child: Text('Cancel')
+            )
+          ],
+        );
+      }
+    );
+
+    if((confirm ?? false) && mounted){
+      try{
+      final prefs = await SharedPreferences.getInstance();
+      final username = prefs.getString('saved_username') ?? '';
+      await clearUserResults(username);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Deleted result data successfully!',style: TextStyle(color: Colors.black),),
+          backgroundColor: Colors.lightGreen,
+          duration: Duration(milliseconds: 500),
+        )
+      );
+
+      }catch(e){
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('ERROR deleting data: $e',style: TextStyle(color: Colors.black)),
+            backgroundColor: Colors.red,
+            duration: Duration(milliseconds: 500),
+          )
+        );
+      }
+    }
   }
 
   @override
@@ -109,9 +170,28 @@ class _HomePageState extends State<HomePage> {
                 final SharedPreferences prefs = await SharedPreferences.getInstance();
                 prefs.clear();
 
-                Navigator.pushNamed(context, '/');
+                Navigator.push(
+                  context, 
+                  PageRouteBuilder(
+                    pageBuilder:(context, animation, secondaryAnimation) => TitlePage(),
+                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                      return FadeTransition(
+                        opacity: animation,
+                        child: child
+                      );
+                    },
+                  )
+                );
               },
             ),
+            ListTile(
+              leading: Icon(Icons.clear),
+              title: const Text('Clear all result data'),
+              onTap: () async {
+                await _confirmClearData();
+                Navigator.pop(context);
+              },
+            )
           ],
         ),
       ),
