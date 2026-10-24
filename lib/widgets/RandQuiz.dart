@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutterquiz/pages/HomePage.dart';
 import 'package:flutterquiz/backend/QuizPool.dart' as pool;
 import 'package:flutterquiz/pages/QuizSession.dart';
 import 'package:flutterquiz/widgets/Background.dart';
@@ -19,9 +18,7 @@ class _RandQuizState extends State<RandQuiz> {
   static const String _mcOnly = 'Multiple Choice only';
   static const String _fibOnly = 'Fill in the Blank only';
   static const String _any = 'Any';
-  static const String _defaultName = 'RandomQuiz';
-
-  String? _quizName;
+  
   String? _selectedQuizType;
   double _questionCount = 1;
 
@@ -291,11 +288,11 @@ class _RandQuizState extends State<RandQuiz> {
                               _confirmQuiz();
                             }
                           },
-                          child: Text('Take Quiz'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.lightBlue,
                             foregroundColor: Colors.white
                           ),
+                          child: Text('Take Quiz'),
                         ),
                       ],
                     ),

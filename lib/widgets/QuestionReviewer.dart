@@ -77,6 +77,8 @@ class QuestionReviewerState extends State<QuestionReviewer> {
                 color: Colors.white,
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
+                decoration: TextDecoration.underline,
+                decorationColor: Colors.white
               ),
             ),
             SizedBox(height: 5),

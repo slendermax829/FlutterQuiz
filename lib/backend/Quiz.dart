@@ -11,6 +11,7 @@ class Quiz {
 
   List<Question> get questions => _questions;
   List<Question> get randQuestions => List.from(_questions)..shuffle();
+  
   int get numQuestions => _questions.length;
   
   const Quiz.internal(this._name, this._questions);

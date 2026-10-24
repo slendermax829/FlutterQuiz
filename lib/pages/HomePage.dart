@@ -8,9 +8,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutterquiz/backend/QuizResults.dart';
 class HomePage extends StatefulWidget {
 
-  final String userEmail;
+  final String _userEmail;
 
-  const new({super.key, required this.userEmail});
+  const new({super.key, required this._userEmail});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -22,7 +22,6 @@ class _HomePageState extends State<HomePage> {
   final _pages = const [
     TakeQuiz(),
     RandQuiz(),
-    //Text('index 2 - Results'),
     QuizResultsViewer()
   ];
 
@@ -133,7 +132,7 @@ class _HomePageState extends State<HomePage> {
               fontSize: 12,
               color: Colors.grey,
             );
-          }
+          },
         ),
         animationDuration: Duration(milliseconds: 200),
         backgroundColor: Color.fromARGB(205, 247, 247, 248),
@@ -150,16 +149,18 @@ class _HomePageState extends State<HomePage> {
         labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
       ),
       drawer: Drawer(
+        shape: BeveledRectangleBorder(),
+        clipBehavior: Clip.antiAlias,
         child: ListView(
           children: [
             UserAccountsDrawerHeader(
               decoration: BoxDecoration(color: Color.fromARGB(255, 33, 117, 243)),
-              accountName: Text(widget.userEmail.split('@')[0]),
-              accountEmail: Text(widget.userEmail),
+              accountName: Text(widget._userEmail.split('@')[0]),
+              accountEmail: Text(widget._userEmail),
               currentAccountPicture: CircleAvatar(
-                child: Text(widget.userEmail[0].toUpperCase()),
                 foregroundColor: Colors.white,
                 backgroundColor: const Color.fromARGB(132, 0, 0, 0),
+                child: Text(widget._userEmail[0].toUpperCase()),
               ),
             ),
             ListTile(

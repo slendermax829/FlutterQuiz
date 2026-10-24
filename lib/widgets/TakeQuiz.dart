@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutterquiz/backend/Quiz.dart';
-import 'package:flutterquiz/pages/HomePage.dart';
 import 'package:flutterquiz/pages/QuizSession.dart';
 import 'package:flutterquiz/widgets/Background.dart';
 import 'package:flutterquiz/backend/QuizPool.dart' as pool;
@@ -102,9 +101,9 @@ class _TakeQuizState extends State<TakeQuiz> {
                     final quiz = pool.quizzes[index];
                     return ListTile(
                       leading: CircleAvatar(
-                        child: Text('${index + 1}'),
                         foregroundColor: Colors.white,
                         backgroundColor: Colors.lightBlue,
+                        child: Text('${index + 1}'),
                       ),
                       title: Text(
                         quiz.name,

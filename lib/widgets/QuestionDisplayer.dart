@@ -15,28 +15,28 @@ class QuestionDisplayerState extends State<QuestionDisplayer> {
   late Question _currQuestion;
   late int _currentQuestionIndex;
 
-  late final List<bool> answeredQuestions;
-
-  int get questionNum => _currentQuestionIndex + 1;
-
-  bool get _isFirstQuestion => _currentQuestionIndex == 0;
-  bool get _isLastQuestion => _currentQuestionIndex == widget._questions.length - 1;
+  late final List<bool> _answeredQuestions;
 
   final Map<int, int> _selectedChoices = {};
   final Map<int, String> _typedAnswers = {};
 
   final TextEditingController _textController = TextEditingController();
 
-  bool get allAnswered => answeredQuestions.every((a) => a);
+  int get questionNum => _currentQuestionIndex + 1;
+
+  bool get _isFirstQuestion => _currentQuestionIndex == 0;
+  bool get _isLastQuestion => _currentQuestionIndex == widget._questions.length - 1;
+
+  bool get allAnswered => _answeredQuestions.every((a) => a);
 
   /// Unanswered questions are counted as incorrect.
   ({int finalScore, List<(String, Question)> correct, List<(String, Question)> incorrect}) grade() {
-    final correct = <(String, Question)>[];
-    final incorrect = <(String, Question)>[];
+    var correct = <(String, Question)>[];
+    var incorrect = <(String, Question)>[];
 
-    for (final (i, q) in widget._questions.indexed) {
+    for (var (i, q) in widget._questions.indexed) {
       var answer = q is MultipleChoice ? _selectedChoices[i] : _typedAnswers[i];
-      (answeredQuestions[i] && q.isCorrect(answer) ? correct : incorrect).add((
+      (_answeredQuestions[i] && q.isCorrect(answer) ? correct : incorrect).add((
         q is MultipleChoice ? (_selectedChoices[i] == null ? '' : q.getOption(_selectedChoices[i]!)) : (_typedAnswers[i] ?? ''),q)
       );
     }
@@ -57,7 +57,7 @@ class QuestionDisplayerState extends State<QuestionDisplayer> {
   void initState() {
     super.initState();
 
-    answeredQuestions = List.filled(widget._questions.length, false);
+    _answeredQuestions = List.filled(widget._questions.length, false);
 
     _currentQuestionIndex = 0;
     _currQuestion = widget._questions[_currentQuestionIndex];
@@ -78,7 +78,7 @@ class QuestionDisplayerState extends State<QuestionDisplayer> {
 
     setState(() {
       _setCurrentQuestion(nextQuestionIndex);
-      _textController.text = _typedAnswers[nextQuestionIndex] ?? ''; // set the text for the controller to be the saved answer for fill in the blanks
+      _textController.text = _typedAnswers[nextQuestionIndex] ?? ''; // set the text for the controller to be the saved answer for fill in the blank questions
     });
   }
 
@@ -101,23 +101,25 @@ class QuestionDisplayerState extends State<QuestionDisplayer> {
               ),
               child: LayoutBuilder( // a small bar above that represents the questions answered or not
                 builder: (context, constraints) {
-                  final count = answeredQuestions.length;
-                  if (count == 0) return const SizedBox(height: 24);
-                  const maxDot = 12.0;
-                  const outerPad = 8.0;
-                  final slot = (constraints.maxWidth - 2 * outerPad) / count;
-                  final gap = (slot * 0.25).clamp(1.0, 20.0);
-                  final dot = (slot - gap).clamp(3.0, maxDot);
+                  final int count = _answeredQuestions.length;
+                  if (count == 0) return const SizedBox(height: 24); // if no questions are available
+                  
+                  const double maxDotSize = 12.0;
+                  const double outerPadding = 8.0;
+
+                  final double slotSize = (constraints.maxWidth - 2 * outerPadding) / count;
+                  final double gap = (slotSize * 0.25).clamp(1.0, 20.0);
+                  final double dot = (slotSize - gap).clamp(3.0, maxDotSize);
 
                   return Padding(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: outerPad,
+                      horizontal: outerPadding,
                       vertical: 6,
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: List.generate(count, (index) {
-                        final isAnswered = answeredQuestions[index];
+                      children: List.generate(count, (index) { // generates the dots
+                        final isAnswered = _answeredQuestions[index];
 
                         return AnimatedContainer(
                           duration: const Duration(milliseconds: 125),
@@ -125,7 +127,7 @@ class QuestionDisplayerState extends State<QuestionDisplayer> {
                           height: dot,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: index == _currentQuestionIndex ? Border.all(color: Colors.yellowAccent): null,
+                            border: index == _currentQuestionIndex ? Border.all(color: Colors.lightBlueAccent): null,
                             color: isAnswered ? Colors.green: const Color.fromARGB(145, 79, 79, 79),
                           ),
                         );
@@ -183,6 +185,7 @@ class QuestionDisplayerState extends State<QuestionDisplayer> {
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                       decoration: TextDecoration.underline,
+                      decorationColor: Colors.white
                     ),
                   ),
                   SizedBox(height: 5),
@@ -194,12 +197,12 @@ class QuestionDisplayerState extends State<QuestionDisplayer> {
                   SizedBox(height: 16),
                   if (_currQuestion case final MultipleChoice mc) // when the current question is a multiple choice
                     RadioGroup<int>(
-                      groupValue: _selectedChoices[_currentQuestionIndex],
+                      groupValue: _selectedChoices[_currentQuestionIndex], // multiple choice questions are in the form of a RadioGroup
                       onChanged: (value) {
                         if (value == null) return;
-                        setState(() {
+                        setState(() { // save multiple choice user input
                           _selectedChoices[_currentQuestionIndex] = value;
-                          answeredQuestions[_currentQuestionIndex] = true;
+                          _answeredQuestions[_currentQuestionIndex] = true;
                         });
                       },
                       child: Column(
@@ -238,12 +241,10 @@ class QuestionDisplayerState extends State<QuestionDisplayer> {
                           ),
                           border: OutlineInputBorder(),
                         ),
-                        onChanged: (text) {
+                        onChanged: (text) { // save current fill in the blank user text in map
                           setState(() {
                             _typedAnswers[_currentQuestionIndex] = text;
-                            answeredQuestions[_currentQuestionIndex] = text
-                                .trim()
-                                .isNotEmpty;
+                            _answeredQuestions[_currentQuestionIndex] = text.trim().isNotEmpty;
                           });
                         },
                       ),

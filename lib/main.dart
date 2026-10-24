@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutterquiz/pages/HomePage.dart';
 import 'package:flutterquiz/pages/TitlePage.dart';
 import 'package:flutterquiz/widgets/Background.dart';
 
@@ -14,7 +13,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'FlutterQuiz',
       builder: (context, child) {
         return Stack(
           fit: StackFit.expand,

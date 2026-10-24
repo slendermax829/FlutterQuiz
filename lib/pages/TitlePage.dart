@@ -1,7 +1,4 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
-import 'package:flutterquiz/widgets/Background.dart';
 import 'package:flutterquiz/widgets/LoginForm.dart';
 
 class TitlePage extends StatelessWidget {
@@ -14,7 +11,6 @@ class TitlePage extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          //Container(color: Colors.tealAccent),
           SafeArea(
             maintainBottomViewPadding: true,
             child: LayoutBuilder(
@@ -42,7 +38,6 @@ class TitlePage extends StatelessWidget {
                             fontStyle: FontStyle.italic,
                           ),
                         ),
-                        
                         Text(
                           'A quiz application to test your knowledge both on Dart and Flutter',
                           style: TextStyle(

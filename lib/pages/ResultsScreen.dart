@@ -39,8 +39,6 @@ class ResultsScreen extends StatefulWidget {
 }
 
 class _ResultsScreenState extends State<ResultsScreen> {
-  final GlobalKey<QuestionReviewerState> _reviewerKey = GlobalKey();
-
   bool isSaved = false;
 
   int get _totalQuestions => [...widget._correctQuestions, ...widget._incorrectQuestions].length;
@@ -161,10 +159,12 @@ class _ResultsScreenState extends State<ResultsScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       widget._finalScore >= 70 ? 
+
                       Text('PASSED',style: TextStyle(color: const Color.fromARGB(255, 28, 242, 0),fontSize: 25,fontWeight: FontWeight.bold),):
                       Text('FAILED',style: TextStyle(color: Colors.red,fontSize: 25,fontWeight: FontWeight.bold)),
+
                       Text('Quiz: ${widget._quizName}',style: TextStyle(color: Colors.white, fontSize: 18),),
-                      Text('Score: ${widget._finalScore}%',style: TextStyle(color: Colors.white, fontSize: 18)),
+                      Text('Score: ${widget._finalScore}%',style: TextStyle(color: Colors.white, fontSize: 18, decoration: TextDecoration.underline, decorationColor: Colors.white)),
                       Text('Total number of Questions: $_totalQuestions',style: TextStyle(color: Colors.white),),
                       Text('Correct Questions: ${widget._correctQuestions.length}',style: TextStyle(color: Colors.white)),
                       Text('Incorrect Questions: ${widget._incorrectQuestions.length}',style: TextStyle(color: Colors.white),)

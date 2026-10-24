@@ -13,36 +13,39 @@ class _LoginFormState extends State<LoginForm> {
   final TextEditingController _userController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  ({String username, String password}) get _fields =>
-      (username: _userController.text, password: _passwordController.text);
+  ({String username, String password}) get _fields => (username: _userController.text, password: _passwordController.text);
 
   void _checkForm() async {
-    var username = _fields.username.split('@')[0];
-    var pin = int.parse(_fields.password);
+    try{
+      var username = _fields.username.split('@')[0];
+      var pin = int.parse(_fields.password);
 
-    var loginResponse = await qs.validateUser(username: username, pin: pin);
+      var loginResponse = await qs.validateUser(username: username, pin: pin);
 
-    if(loginResponse.response){
-      
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('saved_username', username);
+      if(loginResponse.response){
+        
+        final SharedPreferences prefs = await SharedPreferences.getInstance(); // save current logged in user's username
+        await prefs.setString('saved_username', username);
 
-      //Navigator.push(context, MaterialPageRoute(builder: (context)=> LoadingPage(userEmail: _userController.text)));
-      Navigator.push(
-        context,
-        PageRouteBuilder(
-          pageBuilder:(context, animation, secondaryAnimation) => LoadingPage(userEmail: _userController.text),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(
-              opacity: animation,
-              child: child,
-            );
-          },
-          transitionDuration: Duration(milliseconds: 300)
-        )
-      );
-    }else{
-      displayMessage('LOGIN FAILED', Colors.red);
+        //Navigator.push(context, MaterialPageRoute(builder: (context)=> LoadingPage(userEmail: _userController.text)));
+        Navigator.push(
+          context,
+          PageRouteBuilder(
+            pageBuilder:(context, animation, secondaryAnimation) => LoadingPage(userEmail: _userController.text),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(
+                opacity: animation,
+                child: child,
+              );
+            },
+            transitionDuration: Duration(milliseconds: 300)
+          )
+        );
+      }else{
+        displayMessage('LOGIN FAILED', Colors.red);
+      }
+    }catch(e){
+      displayMessage('An ERROR Occurred: $e');
     }
   }
 
@@ -58,7 +61,6 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     _userController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -127,7 +129,7 @@ class _LoginFormState extends State<LoginForm> {
                   iconColor: Colors.white,
                   labelText: 'Password',
                   labelStyle: TextStyle(color: Colors.white),
-                  hintText: 'Last 4 digits of your ID eg. 8000xxxx',
+                  hintText: 'Last 4 digits of your ID e.g. 8000xxxx',
                   hintStyle: TextStyle(color: Color.fromARGB(175, 247, 247, 249)),
                   border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white),
@@ -153,7 +155,6 @@ class _LoginFormState extends State<LoginForm> {
                 builder: (context) {
                   return Center(
                     child: ElevatedButton(
-                      child: Text('Log in'),
                       onPressed: () {
                         if (Form.of(context).validate()) {
                           _checkForm();
@@ -163,6 +164,7 @@ class _LoginFormState extends State<LoginForm> {
                         backgroundColor: Colors.teal,
                         foregroundColor: Colors.white,
                       ),
+                      child: Text('Log in'),
                     ),
                   );
                 },
