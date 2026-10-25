@@ -4,6 +4,7 @@ import 'package:flutterquiz/pages/QuizSession.dart';
 import 'package:flutterquiz/widgets/Background.dart';
 import 'package:flutterquiz/backend/QuizPool.dart' as pool;
 
+/// Displays the available preset quizzes and lets users start one.
 class TakeQuiz extends StatefulWidget {
   const new({super.key});
 
@@ -12,7 +13,8 @@ class TakeQuiz extends StatefulWidget {
 }
 
 class _TakeQuizState extends State<TakeQuiz> {
-  
+
+  /// Presents a confirmation box to inform the user the quiz they are about to take
   void _confirmQuiz(Quiz selectedQuiz) async {
     final confirm = await showDialog<bool>(
       context: context,

@@ -1,36 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:flutterquiz/backend/Question.dart';
 
+/// Displays quiz questions and tracks the user's answers.
 class QuestionDisplayer extends StatefulWidget {
+  /// Questions for current quiz
   final List<Question> _questions;
 
+  /// Creates a question displayer for [questions].
   const QuestionDisplayer({super.key, required List<Question> questions})
     : _questions = questions;
 
+  /// Creates the state that tracks answers and navigation through the quiz.
   @override
   State<QuestionDisplayer> createState() => QuestionDisplayerState();
 }
 
+/// Manages question navigation, answer input, and quiz grading.
 class QuestionDisplayerState extends State<QuestionDisplayer> {
+  /// The current question displayed
   late Question _currQuestion;
+
+  /// The current question index
   late int _currentQuestionIndex;
 
+  /// A list of booleans that represent if a question is answered or not for each value
   late final List<bool> _answeredQuestions;
 
+  /// A map for inputs for multiple choice questions
   final Map<int, int> _selectedChoices = {};
+
+   /// A map for inputs for fill in the blank questions
   final Map<int, String> _typedAnswers = {};
 
+  /// A text editing controller for saving fill in the blank responses
   final TextEditingController _textController = TextEditingController();
 
+  /// The one-based number of the question currently being displayed.
   int get questionNum => _currentQuestionIndex + 1;
 
+  /// If the current question displayed is the first question
   bool get _isFirstQuestion => _currentQuestionIndex == 0;
+
+  ///If the current question displayed is the last question
   bool get _isLastQuestion => _currentQuestionIndex == widget._questions.length - 1;
 
+  /// Whether the user has answered every question.
   bool get allAnswered => _answeredQuestions.every((a) => a);
 
-  /// Unanswered questions are counted as incorrect.
-  ({int finalScore, List<(String, Question)> correct, List<(String, Question)> incorrect}) grade() {
+  /// Grades the quiz and separates correct and incorrect answers.
+  ///
+  /// Unanswered questions are counted as incorrect. Each answer entry contains
+  /// the submitted answer text and its corresponding question.
+  ({int finalScore, List<(String, Question)> correct, List<(String, Question)> incorrect}) gradeQuiz() {
     var correct = <(String, Question)>[];
     var incorrect = <(String, Question)>[];
 
@@ -63,11 +84,16 @@ class QuestionDisplayerState extends State<QuestionDisplayer> {
     _currQuestion = widget._questions[_currentQuestionIndex];
   }
 
+  /// Sets the current question from [questionIndex]
   void _setCurrentQuestion(int questionIndex) {
     _currentQuestionIndex = questionIndex;
     _currQuestion = widget._questions[questionIndex];
   }
-
+  
+  /// Changes the question by [step]
+  /// 
+  /// [step] can be 1 for next question and -1 for previous question
+  /// calls [setState] at the end of the function
   void _changeQuestion(int step){
     final nextQuestionIndex = _currentQuestionIndex + step;
 

@@ -3,6 +3,7 @@ import 'package:flutterquiz/backend/QuizService.dart' as qs;
 import 'package:flutterquiz/pages/LoadingPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// Collects login credentials and validates them with the quiz service.
 class LoginForm extends StatefulWidget {
   const new({super.key});
 
@@ -10,11 +11,15 @@ class LoginForm extends StatefulWidget {
   State<LoginForm> createState() => _LoginFormState();
 }
 class _LoginFormState extends State<LoginForm> {
+  /// Text Editing controller for username
   final TextEditingController _userController = TextEditingController();
+  /// Text Editing controller for password (pin)
   final TextEditingController _passwordController = TextEditingController();
 
   ({String username, String password}) get _fields => (username: _userController.text, password: _passwordController.text);
-
+  /// checks the form to see if the users information is provided from the web service
+  /// 
+  /// if a user exists it logs them in
   void _checkForm() async {
     try{
       var username = _fields.username.split('@')[0];
@@ -42,14 +47,14 @@ class _LoginFormState extends State<LoginForm> {
           )
         );
       }else{
-        displayMessage('LOGIN FAILED', Colors.red);
+        _displayMessage('LOGIN FAILED', Colors.red);
       }
     }catch(e){
-      displayMessage('An ERROR Occurred: $e');
+      _displayMessage('An ERROR Occurred: $e');
     }
   }
-
-  void displayMessage(String message, [Color color = Colors.amberAccent]) {
+  /// displays a [SnackBar] message
+  void _displayMessage(String message, [Color color = Colors.amberAccent]) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message, style: TextStyle(color: Colors.black)),

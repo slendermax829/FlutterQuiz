@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutterquiz/backend/QuizResults.dart';
 class HomePage extends StatefulWidget {
 
+  /// email that belongs to the current logged in user
   final String _userEmail;
 
   const new({super.key, required this._userEmail});
@@ -19,18 +20,21 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _currentPage = 0;
   
+  /// Navigation pages used by Navigation Bar
   final _pages = const [
     TakeQuiz(),
     RandQuiz(),
     QuizResultsViewer()
   ];
 
+  /// Icons for non selected pages
   final Map<String,Icon> _icons = const {
     'Quiz': Icon(Icons.search),
     'RandomQuiz': Icon(Icons.question_mark),
     'Results': Icon(Icons.book)
   };
 
+  /// Icons for selected pages
   final Map<String,Icon> _selectedIcons = const{
     'Quiz': Icon(Icons.search, color: Colors.white,),
     'RandomQuiz': Icon(Icons.question_mark, color: Colors.white,),
@@ -43,6 +47,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
+  /// confirmation for clearing user result data
   Future<void> _confirmClearData() async{
     final confirm = await showDialog<bool>(
       context: context, 

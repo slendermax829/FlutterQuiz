@@ -5,7 +5,6 @@ import 'package:flutterquiz/widgets/QuestionDisplayer.dart';
 import 'package:flutterquiz/pages/ResultsScreen.dart';
 
 class QuizSession extends StatefulWidget {
-  final bool _isPractice;
   final String _quizName;
   final List<Question> _questions;
 
@@ -13,10 +12,8 @@ class QuizSession extends StatefulWidget {
     super.key,
     required String quizName,
     required List<Question> questions,
-    bool isPractice = false,
   }) : this._quizName = quizName,
-       this._questions = questions,
-       this._isPractice = isPractice;
+       this._questions = questions;
 
   @override
   State<QuizSession> createState() => _QuizSessionState();
@@ -121,7 +118,6 @@ class _QuizSessionState extends State<QuizSession> {
         pageBuilder: (context, animation, secondaryAnimation) => QuizSession(
           quizName: widget._quizName,
           questions: widget._questions,
-          isPractice: widget._isPractice,
         ),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);
@@ -227,7 +223,7 @@ class _QuizSessionState extends State<QuizSession> {
       if (!mounted || confirm != true) return;
     }
 
-    final graded = displayer.grade(); // gets the grade for the current quiz session
+    final graded = displayer.gradeQuiz(); // gets the grade for the current quiz session
     
     Navigator.pushReplacement(
       context,

@@ -8,17 +8,20 @@ import 'package:http/http.dart' as http;
 const String _quizUrl = 'https://www.cs.utep.edu/cheon/cs4381/homework/quiz/';
 const String _loginUrl = 'https://www.cs.utep.edu/cheon/cs4381/homework/quiz/login.php';
 
+/// An exception describing an unsuccessful request to the quiz server.
 class QuizServerException implements Exception{
     final String message;
     final int statusCode;
     final String url;
 
+    /// Creates an exception with the server message, status code, and URL.
     const QuizServerException({
       required this.message,
       required this.statusCode,
       required this.url
     });
 
+    /// Writes this exception to the application log as an HTTP error.
     void quizLog(){
       dev.log(
         this.toString(),
@@ -28,10 +31,12 @@ class QuizServerException implements Exception{
       );
     }
 
+    /// Returns a summary containing the status code, URL, and message.
     @override
     String toString() => 'QuizServerException($statusCode) at $url: $message';
 }
 
+/// Checks whether the quiz endpoint is reachable and returns a success status.
 Future<bool> validateQuizUrl() async{
   try{
     var url = Uri.parse(_quizUrl);
@@ -45,6 +50,7 @@ Future<bool> validateQuizUrl() async{
   }
 }
 
+/// Checks whether the login endpoint is reachable and returns a success status.
 Future<bool> validateLoginUrl() async{
   var url = Uri.parse(_loginUrl);
   var response = await http.get(url);
@@ -52,6 +58,9 @@ Future<bool> validateLoginUrl() async{
   return response.statusCode == 200;
 }
 
+/// Checks whether the server recognizes the quiz identified by [quizNum].
+///
+/// The returned record contains the server's response flag and reason.
 Future<({bool response,String reason})> validateQuiz(int quizNum) async{
   try{
     var number = quizNum.toString().padLeft(2,'0');
@@ -70,6 +79,7 @@ Future<({bool response,String reason})> validateQuiz(int quizNum) async{
   }
 }
 
+/// Fetches quizzes sequentially until the server reports one is unavailable.
 Future<List<Quiz>> fetchQuizzes() async{
   final quizzes = <Quiz>[];
 
@@ -98,6 +108,10 @@ Future<Quiz?> _fetchQuiz(int quizNum) async{
   return Quiz.fromJson(jsonData['quiz'] as Map<String, dynamic>);
 }
 
+/// Validates the credentials for [username] and [pin].
+///
+/// Returns the server's response flag and reason. Network and timeout failures
+/// are returned as unsuccessful results with an explanatory reason.
 Future<({bool response, String reason})> validateUser({required String username, required int pin}) async{
   try{
     var url = Uri.parse('$_loginUrl?user=$username&pin=$pin');

@@ -3,9 +3,12 @@ import 'package:flutterquiz/backend/QuizResults.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// Displays the saved quiz results for the current user.
 class QuizResultsViewer extends StatefulWidget {
+  /// Creates a viewer for the current user's saved quiz results.
   const QuizResultsViewer({super.key});
 
+  /// Creates the mutable state used to load and display quiz results.
   @override
   State<QuizResultsViewer> createState() => _QuizResultsViewerState();
 }
@@ -21,6 +24,7 @@ class _QuizResultsViewerState extends State<QuizResultsViewer> {
 
   String _displayDate(DateTime resultDate) => DateFormat.yMMMd().format(resultDate);
 
+  /// Retrieves user results information
   Future<void> _load() async {
     final prefs = await SharedPreferences.getInstance();
     final username = prefs.getString('saved_username') ?? '';

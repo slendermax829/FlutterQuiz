@@ -19,7 +19,7 @@ class _LoadingPageState extends State<LoadingPage> {
     super.initState();
     _fetchQuizzes();
   }
-
+  /// fetch quizzes to populate [QuizPool]
   Future<void> _fetchQuizzes() async {
     if (_failed) setState(() => _failed = false);
 

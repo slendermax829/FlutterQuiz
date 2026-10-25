@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutterquiz/backend/Question.dart';
 
+/// Displays the questions and answers from a completed quiz.
 class QuestionReviewer extends StatefulWidget {
   final List<(String, Question)> _correctQuestions;
   final List<(String, Question)> _incorrectQuestions;
 
+  /// Creates a reviewer for the supplied correct and incorrect answers.
+  ///
+  /// Each entry contains the user's answer and its corresponding question.
   const new({
     super.key,
     required List<(String, Question)> correctQuestions,
@@ -12,22 +16,34 @@ class QuestionReviewer extends StatefulWidget {
   }) : this._correctQuestions = correctQuestions,
        this._incorrectQuestions = incorrectQuestions;
 
+  /// Creates the state that navigates between reviewed questions.
   @override
   State<QuestionReviewer> createState() => QuestionReviewerState();
 }
 
+/// Manages navigation through the completed quiz's questions.
 class QuestionReviewerState extends State<QuestionReviewer> {
+  /// A list of all the questions from the quiz
   late final List<(String, Question)> _allQuestions = [
     ...widget._correctQuestions,
     ...widget._incorrectQuestions,
   ];
-
+  /// The one-based number of the question currently being displayed.
   int get _questionNum => _currIndex + 1;
+
+  /// If the current question displayed is the first question
   bool get _isFirstQuestion => _currIndex == 0;
+
+  ///If the current question displayed is the last question
   bool get _isLastQuestion => _currIndex == _allQuestions.length-1;
 
+  /// The current question index
   late int _currIndex = 0;
+
+  /// The current question displayed
   late Question _currQuestion;
+
+  /// The current user's answer for the current questions displayed.
   late String _currUserAnswer;
 
   @override
@@ -38,12 +54,17 @@ class QuestionReviewerState extends State<QuestionReviewer> {
     super.initState();
   }
 
+  /// Sets the current question from [questionIndex]
   void _setCurrentQuestion(int questionIndex){
     _currIndex = questionIndex;
     _currQuestion = _allQuestions[_currIndex].$2;
     _currUserAnswer = _allQuestions[_currIndex].$1;
   }
 
+  /// Changes the question by [step]
+  /// 
+  /// [step] can be 1 for next question and -1 for previous question
+  /// calls [setState] at the end of the function
   void _changeQuestion(int step){
     final nextQuestionIndex = _currIndex + step;
 

@@ -4,6 +4,7 @@ import 'package:flutterquiz/backend/QuizPool.dart' as pool;
 import 'package:flutterquiz/pages/QuizSession.dart';
 import 'package:flutterquiz/widgets/Background.dart';
 
+/// Provides a form for configuring and starting a random quiz.
 class RandQuiz extends StatefulWidget {
   const new({super.key});
 
@@ -12,16 +13,22 @@ class RandQuiz extends StatefulWidget {
 }
 
 class _RandQuizState extends State<RandQuiz> {
+  /// The text editing controller used for inputting a quiz name
   final TextEditingController _textController = TextEditingController();
+
+  /// The key used for the form to save info before submitting
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   static const String _mcOnly = 'Multiple Choice only';
   static const String _fibOnly = 'Fill in the Blank only';
   static const String _any = 'Any';
   
+  /// Selected quiz type
   String? _selectedQuizType;
+  /// User selected question count
   double _questionCount = 1;
 
+  /// Returns the number of max question based from [_selectedQuizType]
   int get _maxQuestions {
     switch (_selectedQuizType) {
       case _mcOnly:
@@ -35,6 +42,7 @@ class _RandQuizState extends State<RandQuiz> {
     }
   }
 
+  /// Changes the type from radio selection
   void _onTypeChanged(String? value){
     setState(() {
       _selectedQuizType = value;
@@ -42,6 +50,7 @@ class _RandQuizState extends State<RandQuiz> {
     });
   }
 
+  /// Presents a confirmation box to inform the user the quiz they are about to take
   void _confirmQuiz() async {
     final confirm = await showDialog<bool>(
       context: context, 
@@ -104,7 +113,7 @@ class _RandQuizState extends State<RandQuiz> {
       final type = switch (_selectedQuizType) {
         _mcOnly => 'multiple choice',
         _fibOnly => 'fill in the blank',
-        _ => null,
+        _ => null, //default aka 'any'
       };
 
       var randQuestions = pool.getRandomQuestions(_questionCount.round(), type: type);
@@ -115,16 +124,6 @@ class _RandQuizState extends State<RandQuiz> {
         );
         return;
       }
-
-      // await Navigator.push<void>(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (context) => QuizSession(
-      //       questions: randQuestions,
-      //       quizName: name,
-      //     ),
-      //   ),
-      // );
 
       await Navigator.push(
         context,

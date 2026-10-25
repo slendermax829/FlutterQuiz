@@ -8,14 +8,17 @@ import 'package:percent_indicator/flutter_percent_indicator.dart';
 import 'package:flutterquiz/widgets/QuestionReviewer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// Provides decimal truncation for [double] values.
 extension Trimmer on double{
   
+  /// Trims this value to the specified number of decimal [digits].
   double trim(int digits){
     num mod = pow(10, digits);
     return (this * mod).truncate() / mod;
   }
 }
 
+/// Displays a quiz score, answer breakdown, and review of the questions.
 class ResultsScreen extends StatefulWidget {
 
   final String _quizName;
@@ -23,6 +26,12 @@ class ResultsScreen extends StatefulWidget {
   final List<(String, Question)> _correctQuestions;
   final List<(String, Question)> _incorrectQuestions;
 
+  /// Creates a results screen from the quiz name, score, and answer lists.
+  ///
+  /// [quizName] is the name of the completed quiz.
+  /// [finalScore] is the score percentage.
+  /// [correctQuestions] and [incorrectQuestions] contain each answer and its
+  /// associated question.
   ResultsScreen({
     super.key,
     required String quizName,
@@ -34,6 +43,7 @@ class ResultsScreen extends StatefulWidget {
        _correctQuestions = correctQuestions,
        _incorrectQuestions = incorrectQuestions;
 
+  /// Creates the mutable state for this results screen.
   @override
   State<ResultsScreen> createState() => _ResultsScreenState();
 }
@@ -41,12 +51,16 @@ class ResultsScreen extends StatefulWidget {
 class _ResultsScreenState extends State<ResultsScreen> {
   bool isSaved = false;
 
+  /// returns the total number of questions
   int get _totalQuestions => [...widget._correctQuestions, ...widget._incorrectQuestions].length;
 
+  /// returns the percent of correct questions
   double get _correctPercent => (widget._correctQuestions.length/_totalQuestions);
 
+  /// returns the percent of incorrect questions
   double get _incorrectPercent => (widget._incorrectQuestions.length/_totalQuestions);
 
+  /// saves the results of the quiz for the user
   void _saveResults() async{
     //debugPrint('...saving results');
 
@@ -67,7 +81,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
       _displaySubmitMessage(message: 'Error saving quiz $e');
     }
   }
-
+  /// displays the [SnackBar] message for quiz result
   void _displaySubmitMessage({String message = '', Color displayColor = Colors.amberAccent}){
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -77,7 +91,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
       ),
     );
   }
-
+  /// returns back to the [HomePage]
   void _backToHomePage(BuildContext screenContext) {
     WidgetsBinding.instance.addPostFrameCallback((_) => changeBackGround(bg: CustomBackgrounds.DEFAULT));
     Navigator.pop(screenContext);

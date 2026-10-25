@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutterquiz/widgets/LoginForm.dart';
 
+/// Displays the FlutterQuiz title and sign-in form.
 class TitlePage extends StatelessWidget {
   const new({super.key});
 

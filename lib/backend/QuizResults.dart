@@ -3,15 +3,30 @@ import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
 
+/// Stores a user's score and answer counts for a completed quiz.
 class QuizResult {
+  /// The username associated with this result.
   final String username;
+
+  /// The name of the completed quiz.
   final String quizName;
+
+  /// The score earned on the quiz.
   final int score;
+
+  /// The number of questions answered correctly.
   final int correct;
+
+  /// The number of questions answered incorrectly.
   final int incorrect;
+
+  /// The total number of questions in the quiz.
   final int total;
+
+  /// The date and time the quiz was taken.
   final DateTime takenAt;
 
+  /// Creates a result record with all quiz and score details.
   const QuizResult({
     required this.username,
     required this.quizName,
@@ -22,6 +37,9 @@ class QuizResult {
     required this.takenAt,
   });
 
+  /// Creates a result record from JSON data.
+  ///
+  /// Missing or invalid fields are replaced with default values.
   factory QuizResult.fromJson(Map<String, dynamic> json) => QuizResult(
         username: json['username'] as String? ?? '',
         quizName: json['quizName'] as String? ?? '',
@@ -33,6 +51,7 @@ class QuizResult {
             DateTime.fromMillisecondsSinceEpoch(0),
       );
 
+  /// Converts this result record to JSON-compatible data.
   Map<String, dynamic> toJson() => {
         'username': username,
         'quizName': quizName,
@@ -87,6 +106,9 @@ Future<void> saveQuizResult(QuizResult result) async {
   );
 }
 
+/// Returns the saved quiz results belonging to [username].
+///
+/// Returns an empty list when the results file is missing or cannot be parsed.
 Future<List<QuizResult>> getUserResults(String username) async{
   try{
     final file = await _resultsFile();
@@ -112,6 +134,7 @@ Future<List<QuizResult>> getUserResults(String username) async{
   }
 }
 
+/// Removes all saved quiz results belonging to [username].
 Future<void> clearUserResults(String username) async{
   final results = await _loadQuizResults();
 
