@@ -29,7 +29,7 @@ class _QuizSessionState extends State<QuizSession> {
     );
     super.initState();
   }
-
+  /// Shows Actions from bottomSheet if user presses the '...' symbol
   void _showSessionActions() {
     showModalBottomSheet<void>(
       context: context,
@@ -77,6 +77,9 @@ class _QuizSessionState extends State<QuizSession> {
     );
   }
 
+  /// Restarts the quiz
+  /// 
+  /// Resets all questions back to unanswered
   void _restartQuiz() async{
     final confirm = await showDialog<bool>(
       context: context, 
@@ -126,6 +129,7 @@ class _QuizSessionState extends State<QuizSession> {
     );
   }
 
+  /// Displays the current quiz info via alertDialogBox
   void _displayInfo() async {
     await showDialog<void>(
       context: context,
@@ -146,6 +150,7 @@ class _QuizSessionState extends State<QuizSession> {
     );
   }
 
+  /// Quits the current quiz and returns back to [HomePage]
   void _quitQuiz() async {
     final confirm = await showDialog<bool>(
       context: context,
@@ -183,12 +188,14 @@ class _QuizSessionState extends State<QuizSession> {
     WidgetsBinding.instance.addPostFrameCallback((_) => setToDefault());
     Navigator.pop(context);
   }
-
+  /// Submits the quiz which then transitions to the [ResultsScreen]
+  /// 
+  /// If any question is unanswered, it prompts a warning message to the user before submission
   void _submitQuiz() async {
 
     final displayer = _displayerKey.currentState; // get the question displayer results
 
-    if (displayer == null) return;
+    if (displayer == null) return; // if displayer key does not exist
 
     if (!displayer.allAnswered) {
       final confirm = await showDialog<bool>(
@@ -220,7 +227,7 @@ class _QuizSessionState extends State<QuizSession> {
           ],
         ),
       );
-      if (!mounted || confirm != true) return;
+      if (!mounted || confirm != true) return; // removes the warning message
     }
 
     final graded = displayer.gradeQuiz(); // gets the grade for the current quiz session

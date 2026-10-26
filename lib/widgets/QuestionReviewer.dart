@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutterquiz/backend/Question.dart';
+import 'package:flutterquiz/backend/QuizService.dart' as service;
+import 'package:http/http.dart';
 
 /// Displays the questions and answers from a completed quiz.
 class QuestionReviewer extends StatefulWidget {
@@ -101,6 +103,23 @@ class QuestionReviewerState extends State<QuestionReviewer> {
                 decoration: TextDecoration.underline,
                 decorationColor: Colors.white
               ),
+            ),
+            if(_currQuestion.figure != '')
+              FutureBuilder<Response>(
+                future: service.fetchImage(_currQuestion.figure), 
+                builder:(context, snapshot) {
+                  if(snapshot.connectionState == ConnectionState.waiting){
+                    return CircularProgressIndicator();
+                  }else if(snapshot.hasError){
+                    return Icon(Icons.broken_image);
+                  }else if(snapshot.hasData && snapshot.data != null){
+                    return Image.memory(
+                            snapshot.data!.bodyBytes,
+                            fit: BoxFit.cover,
+                          );
+                    }
+                  return Placeholder();
+                },
             ),
             SizedBox(height: 5),
             Text(

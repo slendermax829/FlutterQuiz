@@ -14,7 +14,7 @@ void main() {
 
     final questions = List<Question>.generate(
       20,
-      (index) => FillInBlank('Question ${index + 1}', ['answer']),
+      (index) => FillInBlank('Question ${index + 1}', ['answer'],null),
     );
 
     await tester.pumpWidget(
@@ -32,8 +32,8 @@ void main() {
     WidgetTester tester,
   ) async {
     final questions = <Question>[
-      FillInBlank('Question 1', ['answer']),
-      FillInBlank('Question 2', ['answer']),
+      FillInBlank('Question 1', ['answer'],null),
+      FillInBlank('Question 2', ['answer'],null),
     ];
 
     await tester.pumpWidget(

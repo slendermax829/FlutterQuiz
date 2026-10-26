@@ -7,34 +7,7 @@ import 'package:http/http.dart' as http;
 
 const String _quizUrl = 'https://www.cs.utep.edu/cheon/cs4381/homework/quiz/';
 const String _loginUrl = 'https://www.cs.utep.edu/cheon/cs4381/homework/quiz/login.php';
-
-/// An exception describing an unsuccessful request to the quiz server.
-class QuizServerException implements Exception{
-    final String message;
-    final int statusCode;
-    final String url;
-
-    /// Creates an exception with the server message, status code, and URL.
-    const QuizServerException({
-      required this.message,
-      required this.statusCode,
-      required this.url
-    });
-
-    /// Writes this exception to the application log as an HTTP error.
-    void quizLog(){
-      dev.log(
-        this.toString(),
-        name: 'httpError',
-        level: 100,
-        error: bool
-      );
-    }
-
-    /// Returns a summary containing the status code, URL, and message.
-    @override
-    String toString() => 'QuizServerException($statusCode) at $url: $message';
-}
+const String _pictureUrl = 'https://www.cs.utep.edu/cheon/cs4381/homework/quiz/figure.php?name=';
 
 /// Checks whether the quiz endpoint is reachable and returns a success status.
 Future<bool> validateQuizUrl() async{
@@ -44,8 +17,7 @@ Future<bool> validateQuizUrl() async{
 
     return response.statusCode == 200;
 
-  }on QuizServerException catch(e){
-    e.quizLog();
+  }catch(e){
     return false;
   }
 }
@@ -74,8 +46,8 @@ Future<({bool response,String reason})> validateQuiz(int quizNum) async{
       reason: (jsonData['reason'] as String?) ?? 'Quiz $quizNum Found'
     );
     
-  }on QuizServerException catch(e){
-    return (response: false, reason: 'An Error had occurred');
+  }catch(e){
+    throw('An Error had Occurred: $e');
   }
 }
 
@@ -83,10 +55,11 @@ Future<({bool response,String reason})> validateQuiz(int quizNum) async{
 Future<List<Quiz>> fetchQuizzes() async{
   final quizzes = <Quiz>[];
 
-  for(var quizNum = 1; ; quizNum++){
+  for(var quizNum = 1; quizNum <= 99 ; quizNum++){
     final quiz = await _fetchQuiz(quizNum);
     if(quiz == null){
-      break;
+      //break;
+      continue;
     }
     quizzes.add(quiz);
   }
@@ -123,8 +96,6 @@ Future<({bool response, String reason})> validateUser({required String username,
       response: (jsonData['response'] as bool?) ?? false,
       reason: (jsonData['reason'] as String?) ?? 'User Found'
     );
-  }on QuizServerException catch(e){
-    return (response: false, reason: 'An Error had occurred');
   }on TimeoutException{
     return (response: false, reason: 'The server took too long to respond');
   }on SocketException{
@@ -133,5 +104,17 @@ Future<({bool response, String reason})> validateUser({required String username,
     return (response: false, reason: 'Unable to reach the server');
   }on FormatException{
     return (response: false, reason: 'Unexpected response from the server');
+  }
+}
+
+/// Fetches an Image from web service provided by using the web service picture url 
+Future<http.Response> fetchImage(String figure) async{
+  try{
+    var url = Uri.parse('$_pictureUrl$figure');
+    var response =  await http.get(url);
+
+    return response;
+  }catch(e){
+    throw('An Error had Occurred trying to retrieve image: $e');
   }
 }

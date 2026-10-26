@@ -50,7 +50,7 @@ class _RandQuizState extends State<RandQuiz> {
     });
   }
 
-  /// Presents a confirmation box to inform the user the quiz they are about to take
+  /// Presents a confirmation box to inform the user the quiz they are about to take a random quiz
   void _confirmQuiz() async {
     final confirm = await showDialog<bool>(
       context: context, 

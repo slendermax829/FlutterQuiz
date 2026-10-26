@@ -14,7 +14,7 @@ class TakeQuiz extends StatefulWidget {
 
 class _TakeQuizState extends State<TakeQuiz> {
 
-  /// Presents a confirmation box to inform the user the quiz they are about to take
+  /// Presents a confirmation box to inform the user the quiz they are about to take the quiz
   void _confirmQuiz(Quiz selectedQuiz) async {
     final confirm = await showDialog<bool>(
       context: context,
@@ -105,7 +105,7 @@ class _TakeQuizState extends State<TakeQuiz> {
                       leading: CircleAvatar(
                         foregroundColor: Colors.white,
                         backgroundColor: Colors.lightBlue,
-                        child: Text('${index + 1}'),
+                        child: Text('${quiz.quizNo}'),
                       ),
                       title: Text(
                         quiz.name,
@@ -118,10 +118,7 @@ class _TakeQuizState extends State<TakeQuiz> {
                         ),
                       ),
                       hoverColor: Color.fromARGB(124, 0, 136, 255),
-                      onTap: () => _confirmQuiz(
-                        pool.quizzes.firstWhere(
-                          (q) => q.quizNo == index + 1,
-                        ),
+                      onTap: () => _confirmQuiz(pool.quizzes.firstWhere((q) => q.quizNo == quiz.quizNo),
                       ),
                     );
                   },

@@ -20,15 +20,19 @@ enum QuestionType{
 abstract class Question{
   final String _stem;
   final QuestionType _type;
+  final String? _figure;
 
   /// The text displayed for this question.
   String get stem => _stem;
 
-  /// The lowercase, human-readable question type.
+  /// The easy readable question type.
   String get type => _type.kind();
 
+  /// If the question has an association with a image the path is stored here, otherwise `''`
+  String get figure => _figure ?? '';
+
   /// Creates a question with its [stem] and [type].
-  const Question(this._stem, this._type);
+  const Question(this._stem, this._type, this._figure);
 
   /// Whether [answer] is correct for this question.
   ///
@@ -43,6 +47,7 @@ abstract class Question{
   /// data. Throws when the type is unsupported.
   factory Question.fromData(Map<String,dynamic> quizData){
     String stem = quizData['stem'];
+    String? figure = quizData['figure'];
     
     switch(quizData['type']){
       case 1:
@@ -52,14 +57,14 @@ abstract class Question{
 
         int answer = (quizData['answer'] as int)-1;
 
-        return MultipleChoice(stem, options, answer);
+        return MultipleChoice(stem, options, answer, figure);
 
       case 2:
         List<String> answer = List<String>.from(
           quizData['answer']
         );
 
-        return FillInBlank(stem, answer);
+        return FillInBlank(stem, answer, figure);
 
       default:
         throw "Invalid Question";
@@ -91,7 +96,7 @@ class MultipleChoice extends Question{
   ///
   /// [stem] is the question text, `options` are the choices, and the final
   /// argument is the zero-based index of the correct choice.
-  const MultipleChoice(String stem, this._options, this._answerIndex):super(stem,QuestionType.MULTIPLE_CHOICE);
+  const MultipleChoice(String stem, this._options, this._answerIndex, String? figure):super(stem,QuestionType.MULTIPLE_CHOICE,figure);
 
   @override
   bool isCorrect(Object? answer) => answer is int && answer == _answerIndex;
@@ -108,7 +113,7 @@ class FillInBlank extends Question{
   String get answers => _answers.map((e)=>'${e.toLowerCase().trim()}',).toString();
 
   /// Creates a fill-in-the-blank question with its [stem] and accepted answers.
-  const FillInBlank(String stem, this._answers):super(stem,QuestionType.FILL_IN_THE_BLANK);
+  const FillInBlank(String stem, this._answers, String? figure):super(stem,QuestionType.FILL_IN_THE_BLANK,figure);
 
   @override
   bool isCorrect(Object? answer) =>
