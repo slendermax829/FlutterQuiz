@@ -52,3 +52,6 @@ app.*.map.json
 
 #MetaData
 .metadata
+
+#Git Log
+git_log.txt
